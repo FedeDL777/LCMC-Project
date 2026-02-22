@@ -71,7 +71,64 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
-	
+
+	//New Nodes
+	public static class MinEqualNode extends Node {
+		Node left;
+		Node right;
+		MinEqualNode(Node l, Node r) {left = l; right = r;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+	public static class MagEqualNode extends Node{
+		Node left;
+		Node right;
+		MagEqualNode(Node l, Node r) {left = l; right = r;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+	public static class AndNode extends Node{
+		Node left;
+		Node right;
+		AndNode(Node l, Node r) {left = l; right = r;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+	public static class OrNode extends Node{
+		Node left;
+		Node right;
+		OrNode(Node l, Node r) {left = l; right = r;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+	public static class DivNode extends Node{
+		Node left;
+		Node right;
+		DivNode(Node l, Node r) {left = l; right = r;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+	public static class MinusNode extends Node{
+		Node left;
+		Node right;
+		MinusNode(Node l, Node r) {left = l; right = r;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+	public static class NotNode extends Node{
+		Node exp;
+		NotNode(Node e) { exp = e;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
 	public static class EqualNode extends Node {
 		Node left;
 		Node right;
