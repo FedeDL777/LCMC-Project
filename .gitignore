@@ -1,0 +1,17 @@
+# ANTLR generated files (regenerated automatically)
+gen/
+
+# Compiled output
+out/
+
+# Personal test files
+prova.fool
+
+# macOS
+.DS_Store
+
+# Other IDEs
+.vscode/
+.classpath
+.project
+.settings/
