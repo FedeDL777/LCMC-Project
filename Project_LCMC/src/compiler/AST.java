@@ -72,7 +72,6 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	//New Nodes
 	public static class MinEqualNode extends Node {
 		Node left;
 		Node right;

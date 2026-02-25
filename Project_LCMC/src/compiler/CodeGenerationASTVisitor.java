@@ -119,6 +119,116 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
+	public String visitNode(NotNode n) {
+		if (print) printNode(n);
+		// !exp: if exp==true then false else true
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		return nlJoin(
+			visit(n.exp),
+			"push 1",
+			"beq "+l1,
+			"push 1",   // was false (0), negated becomes true (1)
+			"b "+l2,
+			l1+":",
+			"push 0",   // was true (1), negated becomes false (0)
+			l2+":"
+		);
+	}
+
+	@Override
+	public String visitNode(MinusNode n) {
+		if (print) printNode(n);
+		return nlJoin(
+			visit(n.left),
+			visit(n.right),
+			"sub"
+		);
+	}
+
+	@Override
+	public String visitNode(DivNode n) {
+		if (print) printNode(n);
+		return nlJoin(
+			visit(n.left),
+			visit(n.right),
+			"div"
+		);
+	}
+
+	@Override
+	public String visitNode(MinEqualNode n) {
+		if (print) printNode(n);
+		// a <= b: bleq jumps if second popped <= first popped, i.e. a <= b
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		return nlJoin(
+			visit(n.left),
+			visit(n.right),
+			"bleq "+l1,
+			"push 0",
+			"b "+l2,
+			l1+":",
+			"push 1",
+			l2+":"
+		);
+	}
+
+	@Override
+	public String visitNode(MagEqualNode n) {
+		if (print) printNode(n);
+		// a >= b is equivalent to b <= a (swap operands)
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		return nlJoin(
+			visit(n.right),  // push b first
+			visit(n.left),   // push a second
+			"bleq "+l1,      // jumps if b <= a, i.e. a >= b
+			"push 0",
+			"b "+l2,
+			l1+":",
+			"push 1",
+			l2+":"
+		);
+	}
+
+	@Override
+	public String visitNode(AndNode n) {
+		if (print) printNode(n);
+		// a && b: if a is false (0), result is false; otherwise result is b (short-circuit)
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		return nlJoin(
+			visit(n.left),
+			"push 0",
+			"beq "+l1,     // if left == 0, short-circuit to false
+			visit(n.right),
+			"b "+l2,
+			l1+":",
+			"push 0",
+			l2+":"
+		);
+	}
+
+	@Override
+	public String visitNode(OrNode n) {
+		if (print) printNode(n);
+		// a || b: if a is true (1), result is true; otherwise result is b (short-circuit)
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		return nlJoin(
+			visit(n.left),
+			"push 1",
+			"beq "+l1,     // if left == 1, short-circuit to true
+			visit(n.right),
+			"b "+l2,
+			l1+":",
+			"push 1",
+			l2+":"
+		);
+	}
+
+	@Override
 	public String visitNode(CallNode n) {
 		if (print) printNode(n,n.id);
 		String argCode = null, getAR = null;

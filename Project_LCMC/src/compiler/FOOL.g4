@@ -18,8 +18,8 @@ dec : VAR ID COLON type ASS exp SEMIC  #vardec
     | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR 
         	(LET dec+ IN)? exp SEMIC   #fundec
     ;
-        //parser use the top-down priority, meaning that the top expressions
-        //have greater priority, ex: TIMES > PLUS > PRINT
+        // parser uses top-down priority: earlier alternatives have higher precedence
+        // precedence (high to low): NOT > TIMES/DIV > PLUS/MINUS > EQ/LEQ/GEQ > AND > OR
 exp     :NOT exp #not
         | exp TIMES exp #times
         | exp DIV exp   #div
@@ -52,7 +52,6 @@ type    : INT #intType
 PLUS  	: '+' ;
 MINUS	: '-' ; 
 TIMES   : '*' ;
-//New division
 DIV     : '/';
 LPAR	: '(' ;
 RPAR	: ')' ;
@@ -63,11 +62,9 @@ COLON   : ':' ;
 COMMA	: ',' ;
 EQ	    : '==' ;	
 ASS	    : '=' ;
-//New comparators
 MIN_EQ  : '<=' ;
 MAG_EQ  : '>=' ;
-NOT  : '!' ;
-//And\OR
+NOT     : '!' ;
 AND     : '&&' ;
 OR      : '||' ;
 TRUE	: 'true' ;
