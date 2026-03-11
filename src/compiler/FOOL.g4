@@ -20,14 +20,13 @@ dec : VAR ID COLON type ASS exp SEMIC  #vardec
     ;
         // parser uses top-down priority: earlier alternatives have higher precedence
         // precedence (high to low): NOT > TIMES/DIV > PLUS/MINUS > EQ/LEQ/GEQ > AND > OR
+
 exp     :NOT exp #not
-        | exp TIMES exp #times
-        | exp DIV exp   #div
-        | exp PLUS  exp #plus
-        | exp MINUS exp #minus
-        | exp EQ  exp   #eq
-        | exp MIN_EQ  exp   #min_eq
-        | exp MAG_EQ  exp   #mag_eq
+        | exp (TIMES | DIV) exp #timesDiv
+        | exp (PLUS | MINUS)  exp #plusMinus
+        | exp (MIN_EQ | MAG_EQ) exp #minMag_eq
+        | exp EQ exp   #eq
+
         | exp AND exp #and
         | exp OR exp #or
 

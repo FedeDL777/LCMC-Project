@@ -57,20 +57,36 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitTimes(TimesContext c) {
+	public Node visitTimesDiv(TimesDivContext c) {
+		boolean times= c.TIMES( ) != null;
 		if (print) printVarAndProdName(c);
-		Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.TIMES().getSymbol().getLine());		// setLine added
-        return n;		
-	}
+        Node n;
+        if(times){
+            n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.TIMES().getSymbol().getLine());
+        }
+		else {
+            n = new DivNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine((c.DIV().getSymbol().getLine()));
+        }
+        return n;
+    }
 
 	@Override
-	public Node visitPlus(PlusContext c) {
+	public Node visitPlusMinus(PlusMinusContext c) {
+		boolean plus = c.PLUS() != null;
 		if (print) printVarAndProdName(c);
-		Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.PLUS().getSymbol().getLine());	
-        return n;		
-	}
+        Node n;
+        if(plus){
+            n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.PLUS().getSymbol().getLine());
+        }
+		else {
+            n = new MinusNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.MINUS().getSymbol().getLine());
+        }
+        return n;
+    }
 
 	@Override
 	public Node visitEq(EqContext c) {
@@ -180,37 +196,24 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return n;
 	}
 
-	@Override
-	public Node visitDiv(DivContext c) {
-		if (print) printVarAndProdName(c);
-		Node n = new DivNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.DIV().getSymbol().getLine());
-		return n;
-	}
 
 	@Override
-	public Node visitMinus(MinusContext c) {
+	public Node visitMinMag_eq(MinMag_eqContext c) {
+		boolean mag = c.MAG_EQ() != null;
 		if (print) printVarAndProdName(c);
-		Node n = new MinusNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.MINUS().getSymbol().getLine());
-		return n;
-	}
+        Node n;
+        if(mag){
+            n = new MagEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.MAG_EQ().getSymbol().getLine());
+        }
+		else{
+            n = new MinEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.MIN_EQ().getSymbol().getLine());
+        }
+        return n;
 
-	@Override
-	public Node visitMin_eq(Min_eqContext c) {
-		if (print) printVarAndProdName(c);
-		Node n = new MinEqualNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.MIN_EQ().getSymbol().getLine());
-		return n;
-	}
 
-	@Override
-	public Node visitMag_eq(Mag_eqContext c) {
-		if (print) printVarAndProdName(c);
-		Node n = new MagEqualNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.MAG_EQ().getSymbol().getLine());
-		return n;
-	}
+    }
 
 	@Override
 	public Node visitAnd(AndContext c) {
