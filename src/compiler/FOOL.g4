@@ -14,24 +14,18 @@ progbody : LET (classdec+ dec* | dec+) IN exp SEMIC  #letInProg
          | exp SEMIC              #noDecProg
          ;
 
-classdec : CLASS ID LPAR arg* RPAR CLPAR fun* CRPAR ;
+classdec : CLASS ID LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR CLPAR
+        (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                	(LET dec+ IN)? exp SEMIC)*
+    CRPAR ;
 
 dec : VAR ID COLON type ASS exp SEMIC  #vardec
-    | fun   #fundec
+    | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+        	(LET dec+ IN)? exp SEMIC   #fundec
     ;
-
-fun : FUN ID COLON type LPAR arg? RPAR funbody ;
-
-arg : (ID COLON type)(COMMA ID COLON type)* ;
-
-funbody : (LET dec+ IN)? exp SEMIC ;
-
-
-
 
         // parser uses top-down priority: earlier alternatives have higher precedence
         // precedence (high to low): NOT > TIMES/DIV > PLUS/MINUS > EQ/LEQ/GEQ > AND > OR
-
 exp     :NOT exp #not
         | exp (TIMES | DIV) exp #timesDiv
         | exp (PLUS | MINUS)  exp #plusMinus
@@ -43,7 +37,6 @@ exp     :NOT exp #not
 
         | LPAR exp RPAR #pars
     	| MINUS? NUM #integer
-    	//TODO unisci true false
 	    | (TRUE | FALSE) #trueFalse
 	    | NULL #null
 	    | NEW ID LPAR (exp (COMMA exp)* )? RPAR #new
@@ -51,8 +44,7 @@ exp     :NOT exp #not
 	    | PRINT LPAR exp RPAR #print
 	    | ID #id
 	    | ID LPAR (exp (COMMA exp)* )? RPAR #call
-	    //TODO da aggiustare nel caso di chiamta di oggetti a catena
-	    | ID (DOT ID)+ LPAR (exp (COMMA exp)* )? RPAR #methodCall
+	    | ID DOT ID LPAR (exp (COMMA exp)* )? RPAR #methodCall
         ;
 
              

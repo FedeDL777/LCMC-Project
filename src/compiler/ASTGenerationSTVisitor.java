@@ -146,15 +146,15 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitTrue(TrueContext c) {
+	public Node visitTrueFalse(TrueFalseContext c) {
+		boolean isTrue = c.TRUE() != null;
 		if (print) printVarAndProdName(c);
-		return new BoolNode(true);
-	}
-
-	@Override
-	public Node visitFalse(FalseContext c) {
-		if (print) printVarAndProdName(c);
-		return new BoolNode(false);
+		if (isTrue) {
+			return new BoolNode(true);
+		}
+		else {
+			return new BoolNode(false);
+		}
 	}
 
 	@Override
