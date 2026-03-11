@@ -9,15 +9,26 @@ public int lexicalErrors=0;
  *------------------------------------------------------------------*/
 
 prog  : progbody EOF ;
-     
-progbody : LET dec+ IN exp SEMIC  #letInProg
+
+progbody : LET (classdec+ dec* | dec+) IN exp SEMIC  #letInProg
          | exp SEMIC              #noDecProg
          ;
- 
+
+classdec : CLASS ID LPAR arg* RPAR CLPAR fun* CRPAR ;
+
 dec : VAR ID COLON type ASS exp SEMIC  #vardec
-    | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR 
-        	(LET dec+ IN)? exp SEMIC   #fundec
+    | fun   #fundec
     ;
+
+fun : FUN ID COLON type LPAR arg? RPAR funbody ;
+
+arg : (ID COLON type)(COMMA ID COLON type)* ;
+
+funbody : (LET dec+ IN)? exp SEMIC ;
+
+
+
+
         // parser uses top-down priority: earlier alternatives have higher precedence
         // precedence (high to low): NOT > TIMES/DIV > PLUS/MINUS > EQ/LEQ/GEQ > AND > OR
 
@@ -32,16 +43,22 @@ exp     :NOT exp #not
 
         | LPAR exp RPAR #pars
     	| MINUS? NUM #integer
-	    | TRUE #true     
-	    | FALSE #false
+    	//TODO unisci true false
+	    | (TRUE | FALSE) #trueFalse
+	    | NULL #null
+	    | NEW ID LPAR (exp (COMMA exp)* )? RPAR #new
 	    | IF exp THEN CLPAR exp CRPAR ELSE CLPAR exp CRPAR  #if   
 	    | PRINT LPAR exp RPAR #print
 	    | ID #id
 	    | ID LPAR (exp (COMMA exp)* )? RPAR #call
-        ; 
+	    //TODO da aggiustare nel caso di chiamta di oggetti a catena
+	    | ID (DOT ID)+ LPAR (exp (COMMA exp)* )? RPAR #methodCall
+        ;
+
              
 type    : INT #intType
         | BOOL #boolType
+        | ID #classType
  	    ;  
  	  		  
 /*------------------------------------------------------------------
@@ -75,13 +92,19 @@ PRINT	: 'print' ;
 LET     : 'let' ;	
 IN      : 'in' ;	
 VAR     : 'var' ;
-FUN	    : 'fun' ;	  
+FUN	    : 'fun' ;
+//estensione oggetti
+CLASS   : 'class';
+NEW     : 'new';
+NULL    : 'null';
+DOT     : '.';
+
+
 INT	    : 'int' ;
 BOOL	: 'bool' ;
-NUM     : '0' | ('1'..'9')('0'..'9')* ; 
+NUM     : '0' | ('1'..'9')('0'..'9')* ;
 
 ID  	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')* ;
-
 
 WHITESP  : ( '\t' | ' ' | '\r' | '\n' )+    -> channel(HIDDEN) ;
 
