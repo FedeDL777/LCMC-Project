@@ -5,7 +5,7 @@ gen/
 out/
 
 # Personal test files
-prova.fool
+#prova.fool
 
 # macOS
 .DS_Store
