@@ -32,6 +32,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			"halt"
 		);
 	}
+	@Override
+	public String visitNode(ClassNode n) {
+	  return "";
+	}
+
 
 	@Override
 	public String visitNode(FunNode n) {

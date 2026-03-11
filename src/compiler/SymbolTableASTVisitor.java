@@ -34,13 +34,18 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
+
 	@Override
 	public Void visitNode(ProgNode n) {
 		if (print) printNode(n);
 		visit(n.exp);
 		return null;
 	}
-	
+	@Override
+	public Void visitNode(ClassNode n) {
+
+		return null;
+	}
 	@Override
 	public Void visitNode(FunNode n) {
 		if (print) printNode(n);

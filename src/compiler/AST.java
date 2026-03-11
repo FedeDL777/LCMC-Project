@@ -4,7 +4,10 @@ import java.util.*;
 import compiler.lib.*;
 
 public class AST {
-	
+
+
+
+
 	public static class ProgLetInNode extends Node {
 		List<Node> declist;
 		Node exp;
@@ -14,6 +17,7 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
+
 	public static class ProgNode extends Node {
 		Node exp;
 		ProgNode(Node e) {exp = e;}
@@ -21,7 +25,20 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
-	
+
+
+	public static class ClassNode extends Node {
+		String id;
+		List<ParNode> args;
+		List<FunNode> methods;
+		ClassNode(String i, List<ParNode> ag, List<FunNode> mt){
+			id = i; args = ag; methods = mt;
+		}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
 	public static class FunNode extends Node {
 		String id;
 		TypeNode retType;

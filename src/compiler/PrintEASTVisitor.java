@@ -22,7 +22,11 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 		visit(n.exp);
 		return null;
 	}
+	@Override
+	public Void visitNode(ClassNode n) {
 
+		return null;
+	}
 	@Override
 	public Void visitNode(FunNode n) {
 		printNode(n,n.id);

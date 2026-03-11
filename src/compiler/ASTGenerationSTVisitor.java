@@ -106,6 +106,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		}
         return n;
 	}
+    @Override
+	public Node visitClassdec(ClassdecContext c) {
+		Node n = null;
+		return n;
+	}
+
 
 	@Override
 	public Node visitFundec(FundecContext c) {

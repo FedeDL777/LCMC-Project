@@ -40,7 +40,11 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (print) printNode(n);
 		return visit(n.exp);
 	}
+	@Override
+	public TypeNode visitNode(ClassNode n) throws TypeException {
 
+		return null;
+	}
 	@Override
 	public TypeNode visitNode(FunNode n) throws TypeException {
 		if (print) printNode(n,n.id);
