@@ -38,7 +38,7 @@ exp     :NOT exp #not
         | LPAR exp RPAR #pars
     	| MINUS? NUM #integer
 	    | (TRUE | FALSE) #trueFalse
-	    | NULL #null
+	    | NULL #empty
 	    | NEW ID LPAR (exp (COMMA exp)* )? RPAR #new
 	    | IF exp THEN CLPAR exp CRPAR ELSE CLPAR exp CRPAR  #if   
 	    | PRINT LPAR exp RPAR #print
@@ -51,6 +51,7 @@ exp     :NOT exp #not
 type    : INT #intType
         | BOOL #boolType
         | ID #classType
+        | NULL #emptyType
  	    ;  
  	  		  
 /*------------------------------------------------------------------
