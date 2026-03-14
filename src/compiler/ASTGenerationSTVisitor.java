@@ -106,12 +106,20 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		}
         return n;
 	}
+
+	//TODO
     @Override
 	public Node visitClassdec(ClassdecContext c) {
 		Node n = null;
 		return n;
 	}
 
+	//TODO
+	@Override
+	public Node visitMethodCall(MethodCallContext c) {
+		Node n = null;
+		return n;
+	}
 
 	@Override
 	public Node visitFundec(FundecContext c) {
@@ -226,23 +234,20 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return n;
 	}
 
-
 	@Override
-	public Node visitMinMag_eq(MinMag_eqContext c) {
-		boolean mag = c.MAG_EQ() != null;
+	public Node visitLesGreEq(LesGreEqContext c) {
+		boolean mag = c.GRE_EQ() != null;
 		if (print) printVarAndProdName(c);
         Node n;
         if(mag){
-            n = new MagEqualNode(visit(c.exp(0)), visit(c.exp(1)));
-			n.setLine(c.MAG_EQ().getSymbol().getLine());
+            n = new GreaterEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.GRE_EQ().getSymbol().getLine());
         }
 		else{
-            n = new MinEqualNode(visit(c.exp(0)), visit(c.exp(1)));
-			n.setLine(c.MIN_EQ().getSymbol().getLine());
+            n = new LessEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.LES_EQ().getSymbol().getLine());
         }
         return n;
-
-
     }
 
 	@Override

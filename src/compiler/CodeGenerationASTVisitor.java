@@ -162,7 +162,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
-	public String visitNode(MinEqualNode n) {
+	public String visitNode(LessEqualNode n) {
 		if (print) printNode(n);
 		// a <= b: bleq jumps if second popped <= first popped, i.e. a <= b
 		String l1 = freshLabel();
@@ -180,7 +180,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
-	public String visitNode(MagEqualNode n) {
+	public String visitNode(GreaterEqualNode n) {
 		if (print) printNode(n);
 		// a >= b is equivalent to b <= a (swap operands)
 		String l1 = freshLabel();

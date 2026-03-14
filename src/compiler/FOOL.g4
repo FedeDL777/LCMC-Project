@@ -29,8 +29,8 @@ dec : VAR ID COLON type ASS exp SEMIC  #vardec
 exp     :NOT exp #not
         | exp (TIMES | DIV) exp #timesDiv
         | exp (PLUS | MINUS)  exp #plusMinus
-        | exp (MIN_EQ | MAG_EQ) exp #minMag_eq
-        | exp EQ exp   #eq
+        | exp (LES_EQ | GRE_EQ) exp #lesGreEq
+        | exp EQ exp #eq
 
         | exp AND exp #and
         | exp OR exp #or
@@ -52,7 +52,7 @@ type    : INT #intType
         | BOOL #boolType
         | ID #classType
         | NULL #emptyType
- 	    ;  
+ 	    ;
  	  		  
 /*------------------------------------------------------------------
  * LEXER RULES
@@ -71,8 +71,8 @@ COLON   : ':' ;
 COMMA	: ',' ;
 EQ	    : '==' ;	
 ASS	    : '=' ;
-MIN_EQ  : '<=' ;
-MAG_EQ  : '>=' ;
+LES_EQ  : '<=' ;
+GRE_EQ  : '>=' ;
 NOT     : '!' ;
 AND     : '&&' ;
 OR      : '||' ;

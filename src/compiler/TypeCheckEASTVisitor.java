@@ -141,7 +141,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	}
 
 	@Override
-	public TypeNode visitNode(MinEqualNode n) throws TypeException {
+	public TypeNode visitNode(LessEqualNode n) throws TypeException {
 		if (print) printNode(n);
 		if ( !(isSubtype(visit(n.left), new IntTypeNode())
 				&& isSubtype(visit(n.right), new IntTypeNode())) )
@@ -150,7 +150,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	}
 
 	@Override
-	public TypeNode visitNode(MagEqualNode n) throws TypeException {
+	public TypeNode visitNode(GreaterEqualNode n) throws TypeException {
 		if (print) printNode(n);
 		if ( !(isSubtype(visit(n.left), new IntTypeNode())
 				&& isSubtype(visit(n.right), new IntTypeNode())) )
