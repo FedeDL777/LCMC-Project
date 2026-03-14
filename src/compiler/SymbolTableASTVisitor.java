@@ -51,7 +51,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (print) printNode(n);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();  
-		for (ParNode par : n.parlist) parTypes.add(par.type); 
+		for (ParNode par : n.parlist) parTypes.add(par.getType());
 		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes,n.retType),decOffset--);
 		// insert function ID into symbol table
 		if (hm.put(n.id, entry) != null) {
@@ -67,7 +67,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		
 		int parOffset=1;
 		for (ParNode par : n.parlist)
-			if (hmn.put(par.id, new STentry(nestingLevel,par.type,parOffset++)) != null) {
+			if (hmn.put(par.id, new STentry(nestingLevel, par.getType(),parOffset++)) != null) {
 				System.out.println("Par id " + par.id + " at line "+ n.getLine() +" already declared");
 				stErrors++;
 			}
@@ -84,7 +84,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (print) printNode(n);
 		visit(n.exp);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-		STentry entry = new STentry(nestingLevel,n.type,decOffset--);
+		STentry entry = new STentry(nestingLevel, n.getType(),decOffset--);
 		// insert variable ID into symbol table
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
