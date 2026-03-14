@@ -23,16 +23,7 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	public static class FieldNode extends DecNode {
-		String id;
-		FieldNode(String i, TypeNode t) {id = i;
-			setType(t);}
-		public void setType(TypeNode t){
-			type = t;
-		}
-		@Override
-		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
-	}
+
 
 	public static class ClassNode extends DecNode {
 		String id;
@@ -44,6 +35,29 @@ public class AST {
 			id = i; fields = fd; methods = mt;
 		}
 
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class FieldNode extends DecNode {
+		String id;
+		FieldNode(String i, TypeNode t) {id = i;
+			setType(t);}
+		public void setType(TypeNode t){
+			type = t;
+		}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class MethodNode extends FunNode {
+		String label;
+		Integer offSet;
+		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e, String lbl, Integer oS){
+			super(i, rt, pl, dl, e);
+			label = lbl;
+			offSet = oS;
+		}
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
@@ -61,17 +75,7 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	public static class MethodNode extends FunNode {
-		String label;
-		Integer offSet;
-		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e, String lbl, Integer oS){
-			super(i, rt, pl, dl, e);
-			label = lbl;
-			offSet = oS;
-		}
-		@Override
-		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
-	}
+
 
 	public static class NewNode extends Node {
 		String id;
