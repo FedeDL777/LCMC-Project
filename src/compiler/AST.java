@@ -38,6 +38,8 @@ public class AST {
 		String id;
 		List<FieldNode> fields;
 		List<MethodNode> methods;
+		STentry entry;
+		int nl;
 		ClassNode(String i, List<FieldNode> fd, List<MethodNode> mt){
 			id = i; fields = fd; methods = mt;
 		}
@@ -51,8 +53,9 @@ public class AST {
 		String idMethod;
 		List<Node> arglist = new ArrayList<Node>();
 		STentry entry;
-		ClassCallNode(String iclss, String imth, List<Node> rglst, STentry ntr){
-			idClass = iclss; idMethod = imth; arglist = rglst; entry = ntr;
+		int nl;
+		ClassCallNode(String iclss, String imth, List<Node> rglst){
+			idClass = iclss; idMethod = imth; arglist = rglst;
 		}
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -66,15 +69,17 @@ public class AST {
 			label = lbl;
 			offSet = oS;
 		}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
 	public static class NewNode extends Node {
 		String id;
-		List<ParNode> parList;
+		List<Node> nodeList;
 
-		NewNode(String i, List<ParNode> prLst){
+		NewNode(String i, List<Node> ndLst){
 			id = i;
-			parList = prLst;
+			nodeList = ndLst;
 		}
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -96,7 +101,7 @@ public class AST {
 		Node exp;
 		FunNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e) {
 	    	id=i; retType=rt; parlist=pl; declist=dl; exp=e;}
-		
+
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
@@ -288,6 +293,10 @@ public class AST {
 	}
 	//new types
 	public static class  RefTypeNode extends TypeNode {
+		String id;
+		RefTypeNode(String i){
+			id = i;
+		}
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
@@ -295,5 +304,17 @@ public class AST {
 	public static class  EmptyTypeNode extends TypeNode {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class ClassTypeNode extends TypeNode{
+		ArrayList<TypeNode> allFields;
+		ArrayList<ArrowTypeNode> allMethods;
+		ClassTypeNode(ArrayList<TypeNode> lFlds,ArrayList<ArrowTypeNode> lMthds){
+			allFields = lFlds;
+			allMethods = lMthds;
+		}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+
 	}
 }
