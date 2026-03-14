@@ -63,7 +63,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(VarNode n) throws TypeException {
 		if (print) printNode(n,n.id);
-		if ( !isSubtype(visit(n.exp),ckvisit(n.type)) ) //check
+		if ( !isSubtype(visit(n.exp),ckvisit(n.getType())) ) //check
 			throw new TypeException("Incompatible value for variable " + n.id,n.getLine());
 		return null;
 	}
