@@ -5,9 +5,6 @@ import compiler.lib.*;
 
 public class AST {
 
-
-
-
 	public static class ProgLetInNode extends Node {
 		List<Node> declist;
 		Node exp;
@@ -26,20 +23,72 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-
-	public static class ClassNode extends Node {
+	public static class FieldNode extends DecNode {
 		String id;
-		List<ParNode> args;
-		List<FunNode> methods;
-		ClassNode(String i, List<ParNode> ag, List<FunNode> mt){
-			id = i; args = ag; methods = mt;
+		FieldNode(String i, TypeNode t) {id = i;
+			setType(t);}
+		public void setType(TypeNode t){
+			type = t;
+		}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class ClassNode extends DecNode {
+		String id;
+		List<FieldNode> fields;
+		List<MethodNode> methods;
+		ClassNode(String i, List<FieldNode> fd, List<MethodNode> mt){
+			id = i; fields = fd; methods = mt;
 		}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	public static class FunNode extends Node {
+	public static class ClassCallNode extends Node {
+		String idClass;
+		String idMethod;
+		List<Node> arglist = new ArrayList<Node>();
+		STentry entry;
+		ClassCallNode(String iclss, String imth, List<Node> rglst, STentry ntr){
+			idClass = iclss; idMethod = imth; arglist = rglst; entry = ntr;
+		}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class MethodNode extends FunNode {
+		String label;
+		Integer offSet;
+		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e, String lbl, Integer oS){
+			super(i, rt, pl, dl, e);
+			label = lbl;
+			offSet = oS;
+		}
+	}
+
+	public static class NewNode extends Node {
+		String id;
+		List<ParNode> parList;
+
+		NewNode(String i, List<ParNode> prLst){
+			id = i;
+			parList = prLst;
+		}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class EmptyNode extends Node{
+		EmptyNode(){}
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+
+	}
+
+
+	public static class FunNode extends DecNode {
 		String id;
 		TypeNode retType;
 		List<ParNode> parlist;
@@ -52,20 +101,28 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	public static class ParNode extends Node {
+	public static class ParNode extends DecNode {
 		String id;
-		TypeNode type;
-		ParNode(String i, TypeNode t) {id = i; type = t;}
+		ParNode(String i, TypeNode t) {id = i;
+			setType(t);}
+		public void setType(TypeNode t){
+			type = t;
+		}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 	
-	public static class VarNode extends Node {
+	public static class VarNode extends DecNode {
 		String id;
-		TypeNode type;
 		Node exp;
-		VarNode(String i, TypeNode t, Node v) {id = i; type = t; exp = v;}
+		VarNode(String i, TypeNode t, Node v) {id = i;
+			setType(t);
+			exp = v;
+			}
+		public void setType(TypeNode t){
+			type = t;
+		}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -229,5 +286,14 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
+	//new types
+	public static class  RefTypeNode extends TypeNode {
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
 
+	public static class  EmptyTypeNode extends TypeNode {
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
 }
