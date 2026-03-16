@@ -14,10 +14,13 @@ progbody : LET (classdec+ dec* | dec+) IN exp SEMIC  #letInProg
          | exp SEMIC              #noDecProg
          ;
 
-classdec : CLASS ID LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR CLPAR
-        (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
-                	(LET dec+ IN)? exp SEMIC)*
-    CRPAR ;
+classdec : CLASS ID LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                CLPAR
+                    methoddec*
+                CRPAR ;
+
+methoddec : FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                    (LET dec+ IN)? exp SEMIC ;
 
 dec : VAR ID COLON type ASS exp SEMIC  #vardec
     | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
