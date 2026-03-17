@@ -317,7 +317,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
 		TerminalNode classId = c.ID(0);
 		TerminalNode methodId = c.ID(1);
-		Node n = new MethodCallNode(classId.getText(), methodId.getText(), arglist);
+		Node n = new ClassCallNode(classId.getText(), methodId.getText(), arglist);
 		n.setLine(methodId.getSymbol().getLine());
 		return n;
 	}

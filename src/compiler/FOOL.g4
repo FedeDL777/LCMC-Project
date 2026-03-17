@@ -47,7 +47,7 @@ exp     :NOT exp #not
 	    | PRINT LPAR exp RPAR #print
 	    | ID #id
 	    | ID LPAR (exp (COMMA exp)* )? RPAR #call
-	    | ID DOT ID LPAR (exp (COMMA exp)* )? RPAR #methodCall
+	    | ID DOT ID LPAR (exp (COMMA exp)* )? RPAR #classCall
         ;
 
              

@@ -334,14 +334,14 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	public static class MethodCallNode extends Node {
+	public static class ClassCallNode extends Node {
 		String idClass;
 		String idMethod;
 		List<Node> arglist;
 		STentry entry;
 		int nl;
 
-		MethodCallNode(String idC, String idM, List<Node> args){
+		ClassCallNode(String idC, String idM, List<Node> args){
 			idClass = idC;
 			idMethod = idM;
 			arglist = args;
