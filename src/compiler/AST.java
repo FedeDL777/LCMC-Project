@@ -70,13 +70,8 @@ public class AST {
 
 	//methoddec
 	public static class MethodNode extends FunNode {
-		String label;
-		Integer offSet;
-
-		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e, String lbl, Integer offS){
+		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e){
 			super(i, rt, pl, dl, e);
-			label = lbl;
-			offSet = offS;
 		}
 
 		@Override
@@ -274,11 +269,11 @@ public class AST {
 
 	public static class NewNode extends Node {
 		String id;
-		List<Node> nodeList;
+		List<Node> expList;
 
-		NewNode(String i, List<Node> ndLst){
+		NewNode(String i, List<Node> expLst){
 			id = i;
-			nodeList = ndLst;
+			expList = expLst;
 		}
 
 		@Override
@@ -326,7 +321,7 @@ public class AST {
 
 	public static class CallNode extends Node {
 		String id;
-		List<Node> arglist = new ArrayList<Node>();
+		List<Node> arglist;
 		STentry entry;
 		int nl;
 
@@ -342,7 +337,7 @@ public class AST {
 	public static class MethodCallNode extends Node {
 		String idClass;
 		String idMethod;
-		List<Node> arglist = new ArrayList<Node>();
+		List<Node> arglist;
 		STentry entry;
 		int nl;
 

@@ -42,10 +42,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return visit(c.progbody());
 	}
 
+	//TODO: Added class declaration
 	@Override
 	public Node visitLetInProg(LetInProgContext c) {
 		if (print) printVarAndProdName(c);
 		List<Node> declist = new ArrayList<>();
+		for (ClassdecContext cls: c.classdec()) declist.add(visit(cls));
 		for (DecContext dec : c.dec()) declist.add(visit(dec));
 		return new ProgLetInNode(declist, visit(c.exp()));
 	}
@@ -57,18 +59,43 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	//classdec
-	//TODO
 	@Override
 	public Node visitClassdec(ClassdecContext c) {
+		if (print) printVarAndProdName(c);
+		List<FieldNode> fieldList = new ArrayList<>();
+		for (int i = 1; i < c.ID().size(); i++) {
+			FieldNode p = new FieldNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
+			p.setLine(c.ID(i).getSymbol().getLine());
+			fieldList.add(p);
+		}
+		List<MethodNode> methodList = new ArrayList<>();
+		for (MethoddecContext methoddec : c.methoddec()) methodList.add((MethodNode)visit(methoddec));
 		Node n = null;
+		if (!c.ID().isEmpty()) { //non-incomplete ST
+			n = new ClassNode(c.ID(0).getText(), fieldList, methodList, new ClassTypeNode());
+			n.setLine(c.CLASS().getSymbol().getLine());
+		}
 		return n;
 	}
 
 	//methoddec
-	//TODO
+	//Check if setline fun is ok
 	@Override
 	public Node visitMethoddec(MethoddecContext c) {
+		if (print) printVarAndProdName(c);
+		List<ParNode> parList = new ArrayList<>();
+		for (int i = 1; i < c.ID().size(); i++) {
+			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
+			p.setLine(c.ID(i).getSymbol().getLine());
+			parList.add(p);
+		}
+		List<Node> decList = new ArrayList<>();
+		for (DecContext dec : c.dec()) decList.add(visit(dec));
 		Node n = null;
+		if (!c.ID().isEmpty()) { //non-incomplete ST
+			n = new MethodNode(c.ID(0).getText(), (TypeNode)visit(c.type(0)), parList, decList, visit(c.exp()));
+			n.setLine(c.FUN().getSymbol().getLine());
+		}
 		return n;
 	}
 
@@ -96,7 +123,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<Node> decList = new ArrayList<>();
 		for (DecContext dec : c.dec()) decList.add(visit(dec));
 		Node n = null;
-		if (c.ID().size()>0) { //non-incomplete ST
+		if (!c.ID().isEmpty()) { //non-incomplete ST
 			n = new FunNode(c.ID(0).getText(),(TypeNode)visit(c.type(0)),parList,decList,visit(c.exp()));
 			n.setLine(c.FUN().getSymbol().getLine());
 		}
@@ -201,17 +228,23 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitTrueFalse(TrueFalseContext c) {
 		boolean isTrue = c.TRUE() != null;
 		if (print) printVarAndProdName(c);
+		Node n;
 		if (isTrue) {
-			return new BoolNode(true);
+			n = new BoolNode(true);
+			n.setLine(c.TRUE().getSymbol().getLine());
 		}
 		else {
-			return new BoolNode(false);
+			n = new BoolNode(false);
+			n.setLine(c.FALSE().getSymbol().getLine());
 		}
+		return n;
 	}
 
 	@Override
 	public Node visitEmpty(EmptyContext c) {
 		if (print) printVarAndProdName(c);
+		Node n = new EmptyNode();
+		n.setLine(c.NULL().getSymbol().getLine());
 		return new EmptyNode();
 	}
 
@@ -241,7 +274,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitPrint(PrintContext c) {
 		if (print) printVarAndProdName(c);
-		return new PrintNode(visit(c.exp()));
+		Node n = new PrintNode(visit(c.exp()));
+		n.setLine(c.PRINT().getSymbol().getLine());
+		return n;
 	}
 
 	@Override
@@ -262,10 +297,13 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return n;
 	}
 
-	//TODO
 	@Override
 	public Node visitMethodCall(MethodCallContext c) {
-		Node n = null;
+		if (print) printVarAndProdName(c);
+		List<Node> arglist = new ArrayList<>();
+		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
+		Node n = new MethodCallNode(c.ID(0).getText(), c.ID(1).getText(), arglist);
+		n.setLine(c.ID(1).getSymbol().getLine());
 		return n;
 	}
 
@@ -281,11 +319,10 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return new BoolTypeNode();
 	}
 
-	//TODO
 	@Override
 	public Node visitClassType(ClassTypeContext c) {
-		Node n = null;
-		return n;
+		if (print) printVarAndProdName(c);
+		return new ClassTypeNode();
 	}
 
 	@Override
