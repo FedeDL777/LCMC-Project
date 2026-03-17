@@ -61,15 +61,16 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	//cldec
+	//TODO: fix class extension
 	@Override
 	public Node visitCldec(CldecContext c) {
 		if (print) printVarAndProdName(c);
 		List<FieldNode> fieldList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) {
 			TerminalNode fieldId = c.ID(i);
-			FieldNode p = new FieldNode(fieldId.getText(), (TypeNode) visit(c.type(i)));
-			p.setLine(fieldId.getSymbol().getLine());
-			fieldList.add(p);
+			FieldNode field = new FieldNode(fieldId.getText(), (TypeNode) visit(c.type(i)));
+			field.setLine(fieldId.getSymbol().getLine());
+			fieldList.add(field);
 		}
 		List<MethodNode> methodList = new ArrayList<>();
 		for (MethdecContext methodDec : c.methdec()) {
@@ -311,7 +312,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitDotCall(DotCallContext c) {
 		if (print) printVarAndProdName(c);
 		List<Node> arglist = new ArrayList<>();
-		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
+		for (ExpContext arg : c.exp()) {
+			arglist.add(visit(arg));
+		}
 		TerminalNode classId = c.ID(0);
 		TerminalNode methodId = c.ID(1);
 		Node n = new ClassCallNode(classId.getText(), methodId.getText(), arglist);
