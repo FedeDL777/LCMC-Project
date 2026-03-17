@@ -8,6 +8,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import compiler.AST.*;
 import compiler.FOOLParser.*;
 import compiler.lib.*;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
 import static compiler.lib.FOOLlib.*;
 
 public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
@@ -64,36 +66,44 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<FieldNode> fieldList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) {
-			FieldNode p = new FieldNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
-			p.setLine(c.ID(i).getSymbol().getLine());
+			TerminalNode fieldId = c.ID(i);
+			FieldNode p = new FieldNode(fieldId.getText(), (TypeNode) visit(c.type(i)));
+			p.setLine(fieldId.getSymbol().getLine());
 			fieldList.add(p);
 		}
 		List<MethodNode> methodList = new ArrayList<>();
-		for (MethoddecContext methoddec : c.methoddec()) methodList.add((MethodNode)visit(methoddec));
+		for (MethoddecContext methodDec : c.methoddec()) {
+			MethodNode method = (MethodNode) visit(methodDec);
+			method.setLine(methodDec.ID(0).getSymbol().getLine());
+			methodList.add(method);
+		}
 		Node n = null;
 		if (!c.ID().isEmpty()) { //non-incomplete ST
-			n = new ClassNode(c.ID(0).getText(), fieldList, methodList, new ClassTypeNode());
+			TerminalNode classId = c.ID(0);
+			n = new ClassNode(classId.getText(), fieldList, methodList, new ClassTypeNode());
 			n.setLine(c.CLASS().getSymbol().getLine());
 		}
 		return n;
 	}
 
 	//methoddec
-	//Check if setline fun is ok
 	@Override
 	public Node visitMethoddec(MethoddecContext c) {
 		if (print) printVarAndProdName(c);
 		List<ParNode> parList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) {
-			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
-			p.setLine(c.ID(i).getSymbol().getLine());
+			TerminalNode parId = c.ID(i);
+			ParNode p = new ParNode(parId.getText(),(TypeNode) visit(c.type(i)));
+			p.setLine(parId.getSymbol().getLine());
 			parList.add(p);
 		}
 		List<Node> decList = new ArrayList<>();
 		for (DecContext dec : c.dec()) decList.add(visit(dec));
 		Node n = null;
 		if (!c.ID().isEmpty()) { //non-incomplete ST
-			n = new MethodNode(c.ID(0).getText(), (TypeNode)visit(c.type(0)), parList, decList, visit(c.exp()));
+			TerminalNode methodId = c.ID(0);
+			TypeContext returnType = c.type(0);
+			n = new MethodNode(methodId.getText(), (TypeNode) visit(returnType), parList, decList, visit(c.exp()));
 			n.setLine(c.FUN().getSymbol().getLine());
 		}
 		return n;
@@ -116,15 +126,18 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<ParNode> parList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) {
-			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
-			p.setLine(c.ID(i).getSymbol().getLine());
+			TerminalNode parId = c.ID(i);
+			ParNode p = new ParNode(parId.getText(),(TypeNode) visit(c.type(i)));
+			p.setLine(parId.getSymbol().getLine());
 			parList.add(p);
 		}
 		List<Node> decList = new ArrayList<>();
 		for (DecContext dec : c.dec()) decList.add(visit(dec));
 		Node n = null;
 		if (!c.ID().isEmpty()) { //non-incomplete ST
-			n = new FunNode(c.ID(0).getText(),(TypeNode)visit(c.type(0)),parList,decList,visit(c.exp()));
+			TerminalNode funId = c.ID(0);
+			TypeContext returnType = c.type(0);
+			n = new FunNode(funId.getText(), (TypeNode)visit(returnType), parList, decList, visit(c.exp()));
 			n.setLine(c.FUN().getSymbol().getLine());
 		}
 		return n;
@@ -245,7 +258,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		Node n = new EmptyNode();
 		n.setLine(c.NULL().getSymbol().getLine());
-		return new EmptyNode();
+		return n;
 	}
 
 	@Override
@@ -255,7 +268,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		for (ExpContext exp : c.exp()) {
 			expList.add(visit(exp));
 		}
-		Node n = new NewNode(c.ID().getText(),expList);
+		Node n = new NewNode(c.ID().getText(), expList);
 		n.setLine(c.NEW().getSymbol().getLine());
 		return n;
 	}
@@ -302,8 +315,10 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<Node> arglist = new ArrayList<>();
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
-		Node n = new MethodCallNode(c.ID(0).getText(), c.ID(1).getText(), arglist);
-		n.setLine(c.ID(1).getSymbol().getLine());
+		TerminalNode classId = c.ID(0);
+		TerminalNode methodId = c.ID(1);
+		Node n = new MethodCallNode(classId.getText(), methodId.getText(), arglist);
+		n.setLine(methodId.getSymbol().getLine());
 		return n;
 	}
 
