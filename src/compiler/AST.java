@@ -32,6 +32,7 @@ public class AST {
 	//classdec
 	public static class ClassNode extends DecNode {
 		String id;
+		String extendId = null;
 		List<FieldNode> fieldList;
 		List<MethodNode> methodList;
 		STentry entry;
@@ -39,6 +40,14 @@ public class AST {
 
 		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t){
 			id = i;
+			fieldList = fd;
+			methodList = ml;
+			setType(t);
+		}
+
+		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t, String ei){
+			id = i;
+			extendId = ei;
 			fieldList = fd;
 			methodList = ml;
 			setType(t);
