@@ -35,8 +35,6 @@ public class AST {
 		String extendId = null;
 		List<FieldNode> fieldList;
 		List<MethodNode> methodList;
-		STentry entry;
-		int nl;
 
 		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t){
 			id = i;
