@@ -72,39 +72,48 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		var virtualMethOffset = 0;
 		if(n.extendId!=null){
 			virtualTable.putAll(classTable.get(n.extendId));
-			// aggiungere a nodeN i field e i methods della classe estesa
-			nodeN = classTable.get(n.extendId).get().type;
-			var virtualFieldOffset = NFIELD;
-			var virtualMethOffset = NMETH;
+			//otteniamo le classi che stanno a nesting level 0
+			var extendedClass = symTable.get(0).get(n.extendId);
+			//contare i field e i method
+			ClassTypeNode extendedType = (ClassTypeNode) extendedClass.type;
+
+			virtualFieldOffset = -extendedType.allFields.size()-1;
+			virtualMethOffset = extendedType.allMethods.size();
+			nodeN.allFields = extendedType.allFields;
+			nodeN.allMethods = extendedType.allMethods;
+
 		}
 
 
 
 
 
-
-
-		var fieldTypes = new ArrayList<TypeNode>();
-		var methodTypes = new ArrayList<ArrowTypeNode>();
 
 		//TODO
 		//dobiamo partire da -numerodicampi-1 e numerometodi dipendentemente dalla classe da cui estendiamo SE NO è -1 E 0
 
 
 		for (FieldNode field : n.fieldList){
-			fieldTypes.add(field.getType());
-			virtualTable.put(field.id, new STentry(nestingLevel, field.getType(),virtualFieldOffset--));
+			if(virtualTable.containsKey(field.id)){
+				virtualTable.remove(field.id);
+				//TODO
+				//dobbiamo mantenere l'offset
+			}else{
+				nodeN.allFields.add(field.getType());
+				virtualTable.put(field.id, new STentry(nestingLevel, field.getType(),virtualFieldOffset--));
+			}
+
 		}
-		nodeN.allFields = fieldTypes;
+
 		for(MethodNode meth : n.methodList){
 			List<TypeNode> parTypes = new ArrayList<>();
 			for (ParNode par : meth.parlist) parTypes.add(par.getType());
 			var methType = new ArrowTypeNode(parTypes, meth.retType);
-			methodTypes.add(methType);
+			virtualTable.remove(meth.id);
+			nodeN.allMethods.add(methType);
 			virtualTable.put(meth.id, new STentry(nestingLevel, methType ,virtualMethOffset++));
 		}
 
-		nodeN.allMethods = methodTypes;
 		STentry entry = new STentry(nestingLevel, nodeN, decOffset--);
 
 		// insert class ID into symbol table
