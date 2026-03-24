@@ -47,14 +47,28 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
         if (print) printNode(n);
         //referenza a symbol table
         Map<String, STentry> hm = symTable.get(nestingLevel);
-        List<TypeNode> fieldTypes = new ArrayList<>();
+
+        var fieldTypes = new ArrayList<TypeNode>();
         for (FieldNode field : n.fieldList) fieldTypes.add(field.getType());
-        STentry entry = new STentry(nestingLevel, new ClassTypeNode(),decOffset--);
+
+		var methodTypes = new ArrayList<ArrowTypeNode>();
+		for (MethodNode method : n.methodList) {
+			List<TypeNode> parTypes = new ArrayList<>();
+			for (ParNode par : method.parlist) parTypes.add(par.getType());
+			methodTypes.add(new ArrowTypeNode(parTypes, method.retType));
+		}
+
+		var node = new ClassTypeNode();
+		node.allFields = fieldTypes;
+		node.allMethods = methodTypes;
+
+        STentry entry = new STentry(nestingLevel, node, decOffset--);
         // insert class ID into symbol table
         if (hm.put(n.id, entry) != null) {
             System.out.println("Class id " + n.id + " at line "+ n.getLine() +" already declared");
             stErrors++;
         }
+
         // create new scope for class body
         nestingLevel++;
         Map<String, STentry> hmn = new HashMap<>();
