@@ -2,6 +2,8 @@ package compiler;
 
 import compiler.lib.*;
 
+//STentry contiene le informazioni riguardanti la definizione di una funzione o di una classe. La loro dichiarazione.
+//E' sempre affiancata da una variabile nl (nestinglevel) per specificare il livello a cui viene utilizzata la classe/funzione
 public class STentry implements Visitable {
 	int nl;
 	TypeNode type;

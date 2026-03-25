@@ -32,9 +32,10 @@ public class AST {
 	//classdec
 	public static class ClassNode extends DecNode {
 		String id;
-		String extendId = null;
+		String superId = null;
 		List<FieldNode> fieldList;
 		List<MethodNode> methodList;
+		STentry superEntry;
 
 		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t){
 			id = i;
@@ -43,9 +44,9 @@ public class AST {
 			setType(t);
 		}
 
-		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t, String ei){
+		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t, String si){
 			id = i;
-			extendId = ei;
+			superId = si;
 			fieldList = fd;
 			methodList = ml;
 			setType(t);
@@ -277,6 +278,8 @@ public class AST {
 	public static class NewNode extends Node {
 		String id;
 		List<Node> expList;
+		STentry entry;
+		int nl;
 
 		NewNode(String i, List<Node> expLst){
 			id = i;
