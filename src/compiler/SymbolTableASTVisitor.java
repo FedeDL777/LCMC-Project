@@ -5,6 +5,8 @@ import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
 
+import static compiler.TypeRels.superType;
+
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
 	private List<Map<String, STentry>> symTable = new ArrayList<>();
@@ -60,8 +62,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		var virtualMethOffset = 0;
 
 		if (n.superId != null){
-			var extendedVirtualTable = classTable.get(n.superId);
-			virtualTable.putAll(extendedVirtualTable);
+			// updating the superType map
+			superType.put(n.id, n.superId);
 
 			//otteniamo le classi che stanno a nesting level 0
 			n.superEntry = symTable.get(0).get(n.superId);
@@ -74,6 +76,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			node.allMethods = extendedType.allMethods;
 			extendedNames.add(extendedType.allFields);
 			extendedNames.add(extendedType.allMethods);
+
+			var extendedVirtualTable = classTable.get(n.superId);
+			virtualTable.putAll(extendedVirtualTable);
 		}
 
 		// create new scope for class body

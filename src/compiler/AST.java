@@ -428,10 +428,14 @@ public class AST {
 	}
 
 	public static class RefTypeNode extends TypeNode {
-		String id;
+		public String id;
 
 		RefTypeNode(String i){
 			id = i;
+		}
+
+		public String getId(){
+			return id;
 		}
 
 		@Override
