@@ -33,6 +33,64 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		);
 	}
 
+	//TODO
+	@Override
+	public String visitNode(ClassNode n) {
+		return "";
+	}
+
+	//TODO: slide 38
+	@Override
+	public String visitNode(MethodNode n) {
+		if (print) printNode(n,n.id);
+		String declCode = null, popDecl = null, popParl = null;
+		for (Node dec : n.declist) {
+			declCode = nlJoin(declCode,visit(dec));
+			popDecl = nlJoin(popDecl,"pop");
+		}
+		for (int i=0;i<n.parlist.size();i++) popParl = nlJoin(popParl,"pop");
+		n.label = freshLabel();
+		putCode(
+				nlJoin(
+						n.label+":",
+						"cfp", // set $fp to $sp value
+						"lra", // load $ra value
+						declCode, // generate code for local declarations (they use the new $fp!!!)
+						visit(n.exp), // generate code for function body expression
+						"stm", // set $tm to popped value (function result)
+						popDecl, // remove local declarations from stack
+						"sra", // set $ra to popped value
+						"pop", // remove Access Link from stack
+						popParl, // remove parameters from stack
+						"sfp", // set $fp to popped value (Control Link)
+						"ltm", // load $tm value (function result)
+						"lra", // load $ra value
+						"js"  // jump to to popped address
+				)
+		);
+		return "push "+n.label;
+	}
+
+	@Override
+	public String visitNode(EmptyNode n) {
+		if (print) printNode(n);
+		return nlJoin(
+				"push -1"
+		);
+	}
+
+	//TODO
+	@Override
+	public String visitNode(ClassCallNode n) {
+		return "";
+	}
+
+	//TODO
+	@Override
+	public String visitNode(NewNode n) {
+		return "";
+	}
+
 	@Override
 	public String visitNode(FunNode n) {
 		if (print) printNode(n,n.id);
@@ -133,6 +191,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		);
 	}
 
+	//TODO
 	@Override
 	public String visitNode(CallNode n) {
 		if (print) printNode(n,n.id);
