@@ -40,8 +40,8 @@ public class TypeRels {
 			var parListA = ((ArrowTypeNode) a).parlist;
 			var parListB = ((ArrowTypeNode) b).parlist;
 
-			//check covarianza sul tipo di ritorno
-			if (!isSubtype(retTypeA, retTypeB)) {
+			// check covarianza sul tipo di ritorno
+			if (!isSubtype(retTypeB, retTypeA)) {
 				return false;
 			}
 			if (parListA.size() != parListB.size()) {
@@ -50,7 +50,7 @@ public class TypeRels {
 			for (int i = 0; i < parListA.size(); i++) {
 				var parB = parListB.get(i);
 				var parA = parListA.get(i);
-				if (!isSubtype(parB, parA)) {
+				if (!isSubtype(parA, parB)) {
 					return false;
 				}
 			}
@@ -63,23 +63,23 @@ public class TypeRels {
 	/*
 	ArrowTypeNode
 	//covarianza sul ritorno
-	fun morso(String panino): Cane;
-	fun morso(String panino); BarboncinoCalciabile;
+	fun morso(String panino): Obj;
+	fun morso(String panino); Integer;
 
 	//controvarianza sul tipo dei parametri
-	fun morso(BarboncinoCalciabile panino): String;
+	fun morso(Barboncino panino): String;
 	fun morso(Cane panino); String;
 
 	// esempio insieme
-	fun morso(BarboncinoCalciabile panino): Cane;
-	fun morso(Cane panino); BarboncinoCalciabile;
+	fun morso(Barboncino panino): Cane;
+	fun morso(Cane panino); Barboncino;
 	 */
 
 
 	/*
 	caso RefTypeNode
 	class Animale
-	class Cane exted Animale
-	class BarboncinoCalciabile extend Gatto
+	class Cane extend Animale
+	class Barboncino extend Cane
 	 */
 }

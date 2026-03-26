@@ -45,14 +45,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n, n.id);
-		for (MethodNode method : n.methodList)
+		for (MethodNode method : n.methodList) {
 			try {
 				visit(method);
 			} catch (IncomplException e) {
 			} catch (TypeException e) {
 				System.out.println("Type checking error in a declaration: " + e.text);
 			}
-		//  confronta suo tipo ClassTypeNode in campo "type"con quello del genitore in campo "superEntry"
+		}
+		//  confronta suo tipo ClassTypeNode in campo "type" con quello del genitore in campo "superEntry"
 		//  per controllare che eventuali overriding siano corretti
 		if (n.superId != null) {
 			if (!isSubtype(n.getType(), n.superEntry.type))

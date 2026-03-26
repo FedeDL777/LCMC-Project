@@ -78,6 +78,8 @@ public class AST {
 
 	//methoddec
 	public static class MethodNode extends FunNode {
+		String label;
+
 		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e){
 			super(i, rt, pl, dl, e);
 		}
