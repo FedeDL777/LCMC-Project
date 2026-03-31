@@ -3,13 +3,17 @@ package compiler;
 import compiler.AST.*;
 import compiler.lib.*;
 import compiler.exc.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static compiler.lib.FOOLlib.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
 	CodeGenerationASTVisitor() {}
 	CodeGenerationASTVisitor(boolean debug) {super(false,debug);} //enables print for debugging
-
+	List<List<String>> dispatchTables = new ArrayList<>();
 	@Override
 	public String visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
@@ -36,10 +40,25 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	//TODO
 	@Override
 	public String visitNode(ClassNode n) {
+		List<String> dispatchTable;
+		if(n.superId != null){
+			dispatchTable = new ArrayList<>(dispatchTables.get(-n.superEntry.offset-2));
+		}
+		else {
+			dispatchTable = new ArrayList<>();
+		}
+		for (MethodNode method : n.methods){
+			visitNode(method);
+			String l = method.label;
+			String o = method.offset;
+		}
+
+
+
 		return "";
 	}
 
-	//TODO: slide 38
+	//TODO: check if return null
 	@Override
 	public String visitNode(MethodNode n) {
 		if (print) printNode(n,n.id);
@@ -68,7 +87,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"js"  // jump to to popped address
 				)
 		);
-		return "push "+n.label;
+		//return void code
+		return null;
 	}
 
 	@Override

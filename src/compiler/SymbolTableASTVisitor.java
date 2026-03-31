@@ -5,8 +5,6 @@ import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
 
-import static compiler.TypeRels.superType;
-
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
 	private List<Map<String, STentry>> symTable = new ArrayList<>();
@@ -44,7 +42,18 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		visit(n.exp);
 		return null;
 	}
-	
+	@Override
+	public Void visitNode(ClassNode n) {
+
+		if (print) printNode(n);
+		for (FieldNode field: n.fields){
+
+		}
+
+		return null;
+	}
+	/*
+
 	//TODO Visit Class Node
 	@Override
 	public Void visitNode(ClassNode n) {
@@ -133,6 +142,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		symTable.remove(nestingLevel--);
 		return null;
 	}
+	 */
 
 
 	//TODO Visit Method Node

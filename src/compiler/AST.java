@@ -33,22 +33,22 @@ public class AST {
 	public static class ClassNode extends DecNode {
 		String id;
 		String superId = null;
-		List<FieldNode> fieldList;
-		List<MethodNode> methodList;
+		List<FieldNode> fields;
+		List<MethodNode> methods;
 		STentry superEntry;
 
 		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t){
 			id = i;
-			fieldList = fd;
-			methodList = ml;
+			fields = fd;
+			methods = ml;
 			setType(t);
 		}
 
 		ClassNode(String i, List<FieldNode> fd, List<MethodNode> ml, TypeNode t, String si){
 			id = i;
 			superId = si;
-			fieldList = fd;
-			methodList = ml;
+			fields = fd;
+			methods = ml;
 			setType(t);
 		}
 
@@ -79,6 +79,7 @@ public class AST {
 	//methoddec
 	public static class MethodNode extends FunNode {
 		String label;
+		int offset;
 
 		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<Node> dl, Node e){
 			super(i, rt, pl, dl, e);

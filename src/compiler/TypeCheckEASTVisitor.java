@@ -45,7 +45,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n, n.id);
-		for (MethodNode method : n.methodList) {
+		for (MethodNode method : n.methods) {
 			try {
 				visit(method);
 			} catch (IncomplException e) {
@@ -66,12 +66,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				var classType = (ClassTypeNode) n.getType();
 				for (int i = 0; i < superClassType.allMethods.size(); i++) {
 					if(!isSubtype(classType.allMethods.get(i), superClassType.allMethods.get(i))) {
-						throw new TypeException("Wrong type for method override " + n.methodList.get(i).id, n.methodList.get(i).getLine());
+						throw new TypeException("Wrong type for method override " + n.methods.get(i).id, n.methods.get(i).getLine());
 					}
 				}
 				for (int i = 0; i < superClassType.allFields.size(); i++) {
 					if(!isSubtype(classType.allFields.get(i), superClassType.allFields.get(i))) {
-						throw new TypeException("Wrong type for field override " + n.fieldList.get(i).id, n.fieldList.get(i).getLine());
+						throw new TypeException("Wrong type for field override " + n.fields.get(i).id, n.fields.get(i).getLine());
 					}
 				}
 			}
