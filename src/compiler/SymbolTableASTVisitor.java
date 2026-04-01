@@ -209,8 +209,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		//referenza a symbol table
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();
-		for (ParNode par : n.parlist) parTypes.add(par.getType());
-		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes,n.retType),decOffset--);
+		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), decOffset--);
+
+		for (ParNode par : n.parlist)
+			parTypes.add(par.getType());
+
 		// insert method ID into symbol table
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
@@ -220,20 +223,21 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();
 		symTable.add(hmn);
-		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level
+		int prevNLDecOffset = decOffset; // stores counter for offset of declarations at previous nesting level
 		decOffset=-2;
-
 		int parOffset=1;
+
 		for (ParNode par : n.parlist)
 			if (hmn.put(par.id, new STentry(nestingLevel, par.getType(),parOffset++)) != null) {
 				System.out.println("Par id " + par.id + " at line "+ n.getLine() +" already declared");
 				stErrors++;
 			}
-		for (Node dec : n.declist) visit(dec);
+		for (Node dec : n.declist)
+			visit(dec);
 		visit(n.exp);
 		// remove current scope's hashmap when exiting scope
 		symTable.remove(nestingLevel--);
-		decOffset=prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
+		decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
 		return null;
 	}
 
