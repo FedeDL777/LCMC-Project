@@ -11,6 +11,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	private Map< String, Map<String,STentry> >  classTable = new HashMap<>();
 	private int nestingLevel=0; // current nesting level
 	private int decOffset=-2; // counter for offset of local declarations at current nesting level
+	private int cldecOffset = -2;
 	int stErrors=0;
 
 	SymbolTableASTVisitor() {}
@@ -42,14 +43,70 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		visit(n.exp);
 		return null;
 	}
+
 	@Override
 	public Void visitNode(ClassNode n) {
-
 		if (print) printNode(n);
-		for (FieldNode field: n.fields){
+		Map<String, STentry> hm = symTable.get(nestingLevel);
+		Map<String, STentry> virtualTable = new HashMap<>();
+		var classTypeNode = new ClassTypeNode();
+		STentry classEntry = new STentry(nestingLevel, classTypeNode, cldecOffset--);
 
+		if (hm.put(n.id, classEntry) != null) {
+			System.out.println("Class id " + n.id + " at line "+ n.getLine() +" already declared");
+			stErrors++;
 		}
 
+		if (n.superId != null) {
+			n.superEntry = symTable.get(0).get(n.superId);
+			var superClassTypeNode = (ClassTypeNode) n.superEntry.type;
+			classTypeNode.allFields.addAll(superClassTypeNode.allFields);
+			classTypeNode.allMethods.addAll(superClassTypeNode.allMethods);
+
+			var superClassVirtualTable = classTable.get(n.superId);
+			virtualTable.putAll(superClassVirtualTable);
+		}
+		var fieldOffset = -classTypeNode.allFields.size() - 1;
+		var methodOffset = classTypeNode.allMethods.size();
+
+		classTable.put(n.id, virtualTable);
+		symTable.add(virtualTable);
+
+		nestingLevel++;
+		for (FieldNode field : n.fields) {
+			if (virtualTable.containsKey(field.id)) {
+				var oldFieldOffset = virtualTable.get(field.id).offset;
+				var newSTentry = new STentry(nestingLevel, field.getType(), oldFieldOffset);
+				classTypeNode.allFields.set(-oldFieldOffset - 1, field.getType());
+				virtualTable.put(field.id, newSTentry);
+			}
+			else {
+				var newSTentry = new STentry(nestingLevel, field.getType(), fieldOffset--);
+				classTypeNode.allFields.add(field.getType());
+				virtualTable.put(field.id, newSTentry);
+			}
+		}
+		//TODO: Spostare modifica della virtual table nella visit del methodNode
+		// (classTypeNode modificato dopo la visita del metodo all'interno della classNode)
+		for (MethodNode method : n.methods) {
+			if (virtualTable.containsKey(method.id)) {
+				var oldMethodOffset = virtualTable.get(method.id).offset;
+				var newSTentry = new STentry(nestingLevel, method.getType(), oldMethodOffset);
+				virtualTable.put(method.id, newSTentry);
+				classTypeNode.allMethods.add((ArrowTypeNode) method.getType());
+				method.offset = oldMethodOffset;
+			}
+			else {
+				var newSTentry = new STentry(nestingLevel, method.getType(), methodOffset);
+				virtualTable.put(method.id, newSTentry);
+				classTypeNode.allMethods.add((ArrowTypeNode) method.getType());
+				method.offset = methodOffset++;
+			}
+			visit(method);
+		}
+
+
+		symTable.remove(nestingLevel--);
 		return null;
 	}
 	/*
