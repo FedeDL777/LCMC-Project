@@ -107,9 +107,16 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			} else {
 				names.add(method.id);
 			}
+			List<TypeNode> parTypes = new ArrayList<>();
+			var methodTypeNode = new ArrowTypeNode(parTypes, method.retType);
+			for (ParNode par : method.parlist)
+				parTypes.add(par.getType());
+			n.setType(methodTypeNode);
+
 			if (virtualTable.containsKey(method.id)) { // se faccio overriding
 				var oldMethodEntry = virtualTable.get(method.id);
 				if (!(oldMethodEntry.type instanceof ArrowTypeNode)) {
+					System.out.println(oldMethodEntry.type);
 					System.out.println("Can't override a field with a method name " + method.id + " at line " + n.getLine());
 					stErrors++;
 				} else {
@@ -145,19 +152,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (print) printNode(n);
 		//referenza a symbol table
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-		List<TypeNode> parTypes = new ArrayList<>();
-
 		n.offset = hm.get(n.id).offset;
-		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), n.offset);
 
-		for (ParNode par : n.parlist)
-			parTypes.add(par.getType());
-
-		// insert method ID into symbol table
-		if (hm.put(n.id, entry) != null) {
-			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
-			stErrors++;
-		}
 		// create new scope for function body
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();
