@@ -140,7 +140,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				var newSTentry = new STentry(nestingLevel, n.getType(), n.offset);
 				correspondingClassVirtualTable.put(n.id, newSTentry); //updates virtual table
 			}
-		} else { // caso
+		} else { // caso base
 			n.offset = decOffset;
 			var newSTentry = new STentry(nestingLevel, n.getType(), decOffset++);
 			// insert method ID into virtual table
