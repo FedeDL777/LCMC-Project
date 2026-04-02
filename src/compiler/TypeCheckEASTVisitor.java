@@ -64,15 +64,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				//allFields/allMethods sia sottotipo
 				var superClassType = (ClassTypeNode) n.superEntry.type;
 				var classType = (ClassTypeNode) n.getType();
-				for (int i = 0; i < classType.allMethods.size(); i++) {
-					if(!isSubtype(classType.allMethods.get(i), superClassType.allMethods.get(i))) {
-						throw new TypeException("Wrong type for method override " + n.methods.get(i).id, n.methods.get(i).getLine());
-					}
+				// itera sulle posizioni della superclasse: la figlia deve avere tipi compatibili
+				for (int i = 0; i < superClassType.allMethods.size(); i++) {
+					if(!isSubtype(classType.allMethods.get(i), superClassType.allMethods.get(i)))
+						throw new TypeException("Wrong type for method override at position " + i, n.getLine());
 				}
-				for (int i = 0; i < classType.allFields.size(); i++) {
-					if(!isSubtype(classType.allFields.get(i), superClassType.allFields.get(i))) {
-						throw new TypeException("Wrong type for field override " + n.fields.get(i).id, n.fields.get(i).getLine());
-					}
+				for (int i = 0; i < superClassType.allFields.size(); i++) {
+					if(!isSubtype(classType.allFields.get(i), superClassType.allFields.get(i)))
+						throw new TypeException("Wrong type for field override at position " + i, n.getLine());
 				}
 			}
 		}
@@ -104,16 +103,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	public TypeNode visitNode(NewNode n) throws TypeException {
 		if (print) printNode(n,n.id);
 		TypeNode t = visit(n.entry); // STentry visit
-		if ( !(t instanceof RefTypeNode rt) )
+		if ( !(t instanceof ClassTypeNode classType) )
 			throw new TypeException("Invocation of a non-class "+n.id, n.getLine());
-
-        var classType = (ClassTypeNode) n.entry.type;
 		if ( !(classType.allFields.size() == n.expList.size()) )
 			throw new TypeException("Wrong number of parameters in the invocation of "+n.id,n.getLine());
 		for (int i = 0; i < n.expList.size(); i++)
 			if ( !(isSubtype(visit(n.expList.get(i)),classType.allFields.get(i))) )
 				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.id,n.getLine());
-		return rt;
+		return new RefTypeNode(n.id);
 	}
 
 	@Override
@@ -122,7 +119,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (print) printNode(n,methodInvocation+" at nestinglevel "+n.nl);
 		if ( !(n.entry.type instanceof RefTypeNode) )
 			throw new TypeException("Invocation of a non-class "+methodInvocation, n.getLine());
-		TypeNode t = visit(n.entry); // STentry visit
+		TypeNode t = visit(n.methodEntry); // visita il METHOD entry (ArrowTypeNode), non il class entry
 		if ( !(t instanceof ArrowTypeNode) )
 			throw new TypeException("Invocation of a non-function "+methodInvocation, n.getLine());
 		ArrowTypeNode at = (ArrowTypeNode) t;

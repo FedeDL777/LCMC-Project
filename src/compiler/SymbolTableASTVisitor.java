@@ -4,6 +4,7 @@ import java.util.*;
 import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
+import compiler.TypeRels;
 
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
@@ -49,6 +50,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		Map<String, STentry> virtualTable = new HashMap<>();
 		var classTypeNode = new ClassTypeNode();
+		n.setType(classTypeNode); // TypeCheckEASTVisitor usa n.getType() per i controlli di override
 		STentry classEntry = new STentry(nestingLevel, classTypeNode, decOffset--);
 
 		if (hm.put(n.id, classEntry) != null) {
@@ -64,6 +66,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
 			var superClassVirtualTable = classTable.get(n.superId);
 			virtualTable.putAll(superClassVirtualTable);
+			TypeRels.superType.put(n.id, n.superId); // registra la gerarchia per isSubtype su RefTypeNode
 		}
 		var fieldOffset = -classTypeNode.allFields.size() - 1;
 		var methodOffset = classTypeNode.allMethods.size();
@@ -212,7 +215,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				System.out.println("Class type " + entry.type + " at line "+ entry.nl + " is not a RefTypeNode");
 				stErrors++;
 			} else {
-				var classVirtualTable = classTable.get(n.idClass);
+				var className = ((RefTypeNode) entry.type).id; // nome classe, non nome variabile
+				var classVirtualTable = classTable.get(className);
 				if (classVirtualTable != null) {
 					var methodEntry = classVirtualTable.get(n.idMethod);
 					if (methodEntry != null) {
