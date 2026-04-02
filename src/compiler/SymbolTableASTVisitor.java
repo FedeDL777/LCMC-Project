@@ -121,110 +121,23 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				}
 			}
 			else { // se è un nuovo metodo
-				var newSTentry = new STentry(nestingLevel, method.getType(), methodOffset);
+				var newSTentry = new STentry(nestingLevel, method.getType(), methodOffset++);
 				virtualTable.put(method.id, newSTentry);
 				// classTypeNode.allMethods.add((ArrowTypeNode) method.getType());
 				// method.offset = methodOffset++;
 			}
 			visit(method);
-		}
-
-
-		symTable.remove(nestingLevel--);
-		return null;
-	}
-	/*
-
-	//TODO Visit Class Node
-	@Override
-	public Void visitNode(ClassNode n) {
-		if (print) printNode(n);
-		//referenza a symbol table
-		Map<String, STentry> hm = symTable.get(nestingLevel);
-		var node = new ClassTypeNode();
-		STentry entry = new STentry(nestingLevel, node, decOffset--);
-		var extendedNames = new HashSet<>();
-
-		Map<String, STentry> virtualTable = new HashMap<>();
-		classTable.put(n.id, virtualTable);
-
-		var virtualFieldOffset = -1;
-		var virtualMethOffset = 0;
-
-		if (n.superId != null){
-			// updating the superType map
-			superType.put(n.id, n.superId);
-
-			//otteniamo le classi che stanno a nesting level 0
-			n.superEntry = symTable.get(0).get(n.superId);
-			ClassTypeNode extendedType = (ClassTypeNode) n.superEntry.type;
-
-			virtualFieldOffset = -extendedType.allFields.size() - 1;
-			virtualMethOffset = extendedType.allMethods.size();
-
-			node.allFields = extendedType.allFields;
-			node.allMethods = extendedType.allMethods;
-			extendedNames.add(extendedType.allFields);
-			extendedNames.add(extendedType.allMethods);
-
-			var extendedVirtualTable = classTable.get(n.superId);
-			virtualTable.putAll(extendedVirtualTable);
-		}
-
-		// create new scope for class body
-		nestingLevel++;
-		for (FieldNode field : n.fieldList){
-			if (extendedNames.contains(field)) {
-				if (node.allFields.contains(field)) {
-					var oldFieldEntry = virtualTable.get(field.id);
-					var oldOffset = oldFieldEntry.offset;
-					virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), oldOffset));
-					// node.allFields.remove(oldFieldEntry.type);
-				}
-				else {
-					System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
-					stErrors++;
-				}
+			if (method.offset < classTypeNode.allMethods.size()) {
+				classTypeNode.allMethods.set(method.offset, (ArrowTypeNode) method.getType());
+			} else {
+				classTypeNode.allMethods.add((ArrowTypeNode) method.getType());
 			}
-			extendedNames.add(field);
-			node.allFields.add(field.getType());
-			virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), virtualFieldOffset--));
 		}
 
-		for(MethodNode method : n.methodList){
-			List<TypeNode> parTypes = new ArrayList<>();
-			for (ParNode par : method.parlist) parTypes.add(par.getType());
-			var methodType = new ArrowTypeNode(parTypes, method.retType);
-			if (extendedNames.contains(method))
-				if (node.allMethods.contains(method)) {
-					var oldMethodEntry = virtualTable.get(method.id);
-					var oldOffset = oldMethodEntry.offset;
-					virtualTable.put(method.id, new STentry(nestingLevel, methodType, oldOffset));
-					// node.allMethods.remove(oldMethodEntry.type);
-				}
-				else {
-					System.out.println("Method id " + method.id + " at line " + n.getLine() + " already declared");
-					stErrors++;
-				}
-			extendedNames.add(method);
-			node.allMethods.add(methodType);
-			virtualTable.put(method.id, new STentry(nestingLevel, methodType, virtualMethOffset++));
-			visit(method);
-		}
 
-		// insert class ID into symbol table
-		if (hm.put(n.id, entry) != null) {
-			System.out.println("Class id " + n.id + " at line "+ n.getLine() +" already declared");
-			stErrors++;
-		}
-
-		symTable.add(virtualTable);
-		// remove current scope's hashmap when exiting scope
 		symTable.remove(nestingLevel--);
 		return null;
 	}
-	 */
-
 
 	//TODO Visit Method Node
 	@Override
@@ -233,7 +146,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		//referenza a symbol table
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();
-		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), decOffset--);
+
+		n.offset = hm.get(n.id).offset;
+		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), n.offset);
 
 		for (ParNode par : n.parlist)
 			parTypes.add(par.getType());
