@@ -64,12 +64,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				//allFields/allMethods sia sottotipo
 				var superClassType = (ClassTypeNode) n.superEntry.type;
 				var classType = (ClassTypeNode) n.getType();
-				for (int i = 0; i < superClassType.allMethods.size(); i++) {
+				for (int i = 0; i < classType.allMethods.size(); i++) {
 					if(!isSubtype(classType.allMethods.get(i), superClassType.allMethods.get(i))) {
 						throw new TypeException("Wrong type for method override " + n.methods.get(i).id, n.methods.get(i).getLine());
 					}
 				}
-				for (int i = 0; i < superClassType.allFields.size(); i++) {
+				for (int i = 0; i < classType.allFields.size(); i++) {
 					if(!isSubtype(classType.allFields.get(i), superClassType.allFields.get(i))) {
 						throw new TypeException("Wrong type for field override " + n.fields.get(i).id, n.fields.get(i).getLine());
 					}
