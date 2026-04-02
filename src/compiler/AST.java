@@ -352,6 +352,7 @@ public class AST {
 		String idMethod;
 		List<Node> arglist;
 		STentry entry;
+		STentry methodEntry;
 		int nl;
 
 		ClassCallNode(String idC, String idM, List<Node> args){
