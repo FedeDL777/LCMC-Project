@@ -85,6 +85,10 @@ public class AST {
 			super(i, rt, pl, dl, e);
 		}
 
+		public void setType(TypeNode t){
+			type = t;
+		}
+
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}

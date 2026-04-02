@@ -50,7 +50,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (MethodNode method : n.methods){
 			visitNode(method);
 			String l = method.label;
-			String o = method.offset;
+			//String o = method.offset;
 		}
 
 
