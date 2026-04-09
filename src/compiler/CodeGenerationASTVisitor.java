@@ -41,21 +41,51 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(ClassNode n) {
 		List<String> dispatchTable;
+
 		if(n.superId != null){
+
 			dispatchTable = new ArrayList<>(dispatchTables.get(-n.superEntry.offset-2));
 		}
 		else {
 			dispatchTable = new ArrayList<>();
 		}
+		dispatchTables.add(dispatchTable);
 		for (MethodNode method : n.methods){
 			visitNode(method);
-			String l = method.label;
-			//String o = method.offset;
+			String label = method.label;
+			int offset = method.offset;
+
+
+			if(offset < dispatchTable.size()){
+				dispatchTable.set(offset, label);
+			}
+			else {
+				dispatchTable.add(offset, label);
+			}
 		}
 
 
+		String saveDispatchTableHeap = null;
 
-		return "";
+		for (String label : dispatchTable){
+			saveDispatchTableHeap = nlJoin(
+					saveDispatchTableHeap,
+					"push "+label,
+					"lhp",
+					"sw",
+					"lhp", //incremento valore di hp
+					"push 1",
+					"add",
+					"shp" //salvo il nuovo valore di hp
+					);
+		}
+
+
+		return
+				nlJoin(
+					"lhp", //load $hp sullo stack
+						saveDispatchTableHeap
+				);
 	}
 
 	//TODO: check if return null
@@ -102,6 +132,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	//TODO
 	@Override
 	public String visitNode(ClassCallNode n) {
+
 		return "";
 	}
 
@@ -215,21 +246,43 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(CallNode n) {
 		if (print) printNode(n,n.id);
-		String argCode = null, getAR = null;
-		for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
-		for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
-		return nlJoin(
-				"lfp", // load Control Link (pointer to frame of function "id" caller)
-				argCode, // generate code for argument expressions in reversed order
-				"lfp", getAR, // retrieve address of frame containing "id" declaration
-				// by following the static chain (of Access Links)
-				"stm", // set $tm to popped value (with the aim of duplicating top of stack)
-				"ltm", // load Access Link (pointer to frame of function "id" declaration)
-				"ltm", // duplicate top of stack
-				"push "+n.entry.offset, "add", // compute address of "id" declaration
-				"lw", // load address of "id" function
-				"js"  // jump to popped address (saving address of subsequent instruction in $ra)
-		);
+
+		if(n.entry.offset >= 0){
+			String argCode = null, getAR = null;
+			for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
+			for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
+			return nlJoin(
+					"lfp", // load Control Link (pointer to frame of function "id" caller)
+					argCode, // generate code for argument expressions in reversed order
+					"lfp", getAR, // retrieve address of frame containing "id" declaration
+					// by following the static chain (of Access Links)
+					"stm", // set $tm to popped value (with the aim of duplicating top of stack)
+					"ltm", // load Access Link (pointer to frame of function "id" declaration)
+					"ltm", // duplicate top of stack
+					//TODO
+					"push "+n.entry.offset, "add", // compute address of "id" declaration
+					"lw", // load address of "id" function
+					"js"  // jump to popped address (saving address of subsequent instruction in $ra)
+			);
+		}
+		else {
+			String argCode = null, getAR = null;
+			for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
+			for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
+			return nlJoin(
+					"lfp", // load Control Link (pointer to frame of function "id" caller)
+					argCode, // generate code for argument expressions in reversed order
+					"lfp", getAR, // retrieve address of frame containing "id" declaration
+					// by following the static chain (of Access Links)
+					"stm", // set $tm to popped value (with the aim of duplicating top of stack)
+					"ltm", // load Access Link (pointer to frame of function "id" declaration)
+					"ltm", // duplicate top of stack
+					"push "+n.entry.offset, "add", // compute address of "id" declaration
+					"lw", // load address of "id" function
+					"js"  // jump to popped address (saving address of subsequent instruction in $ra)
+			);
+		}
+
 	}
 
 	@Override
