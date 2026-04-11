@@ -14,6 +14,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	CodeGenerationASTVisitor() {}
 	CodeGenerationASTVisitor(boolean debug) {super(false,debug);} //enables print for debugging
 	List<List<String>> dispatchTables = new ArrayList<>();
+	final static int MEMSIZE = 10000;
 	@Override
 	public String visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
@@ -129,7 +130,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		);
 	}
 
-	//TODO
+
 	@Override
 	public String visitNode(ClassCallNode n) {
 		if (print) printNode(n);
@@ -143,16 +144,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"lfp", getAR, // retrieve address of frame containing "id1" declaration
 				// by following the static chain (of Access Links)
 				"push "+n.entry.offset, "add", // compute address of "id1" declaration
-				"lw", // load value of "id1"
+				"lw", // load object pointer
 
 				"stm", // set $tm to popped value (with the aim of duplicating top of stack)
 				"ltm", // load Access Link (pointer to frame of function "id" declaration)
 				"ltm", // duplicate top of stack
 
-				"lw", //load dispatch table
+				"lw", //load dispatch pointer(dispatch table address)
 
-				"push "+n.methodEntry.offset, "add", // compute address of "id2" declaration
-				"lw", // load address of "id" function
+				"push "+n.methodEntry.offset, "add", //calculate the right method address by adding offset
+				"lw", // load address of method "id2"
 				"js"  // jump to popped address (saving address of subsequent instruction in $ra)
 		);
 
@@ -161,7 +162,31 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	//TODO
 	@Override
 	public String visitNode(NewNode n) {
-		return "";
+		if (print) printNode(n,n.id);
+		String argCode = null;
+		for (int i=n.expList.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.expList.get(i)));
+		String moveElementToHeap = null;
+		for (int i=0; i<=n.expList.size(); i++) {
+			moveElementToHeap = nlJoin(moveElementToHeap,
+					"lhp", //load hp value on the stack
+					"sw",  // save element in memory hp
+					"lhp", "push 1", "add", "shp" //incremento valore di hp e salvo il nuovo valore di hp
+			);
+		}
+
+		var address = MEMSIZE + n.entry.offset;
+
+		return nlJoin(argCode,
+				moveElementToHeap,
+				"push " + address,
+				"lw", //load the dispatch pointer
+				"lhp", //load hp value on the stack
+				"sw", // write in the heap the dispatch pointer
+
+				"lhp", //load hp value on the stack
+				"lhp", "push 1", "add", "shp" //incremento valore di hp e salvo il nuovo valore di hp
+
+				);
 	}
 
 	@Override
@@ -264,7 +289,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		);
 	}
 
-	//TODO
+
 	@Override
 	public String visitNode(CallNode n) {
 		if (print) printNode(n,n.id);
@@ -282,7 +307,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"ltm", // load Access Link (pointer to frame of function "id" declaration)
 					"ltm", // duplicate top of stack
 
-					"lw", //recupero l'indirizzo del metodo a cui saltare usando l'offset di ID nella dispatch table
+					"lw", //load object pointer -> dispatch pointer
 					"push "+n.entry.offset, "add", // compute address of "id" declaration
 					"lw", // load address of "id" function
 					"js"  // jump to popped address (saving address of subsequent instruction in $ra)

@@ -77,11 +77,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		nestingLevel++;
 		var names = new HashSet<String>(); //TODO: find better name
 		for (FieldNode field : n.fields) {
-			if (names.contains(field.id)) {
+			if (!names.add(field.id)) { //if name is being added return add
 				System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
 				stErrors++;
-			} else {
-				names.add(field.id);
 			}
 			if (virtualTable.containsKey(field.id)) { // se faccio overriding
 				var oldFieldEntry = virtualTable.get(field.id);
