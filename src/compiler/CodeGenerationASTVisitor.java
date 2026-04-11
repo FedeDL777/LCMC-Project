@@ -268,11 +268,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(CallNode n) {
 		if (print) printNode(n,n.id);
+		String argCode = null, getAR = null;
+		for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
+		for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
 
-		if(n.entry.offset >= 0){
-			String argCode = null, getAR = null;
-			for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
-			for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
+		if(n.entry.offset >= 0){ //chiamata di un metodo dentro un metodo di una classe
 			return nlJoin(
 					"lfp", // load Control Link (pointer to frame of function "id" caller)
 					argCode, // generate code for argument expressions in reversed order
@@ -281,16 +281,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"stm", // set $tm to popped value (with the aim of duplicating top of stack)
 					"ltm", // load Access Link (pointer to frame of function "id" declaration)
 					"ltm", // duplicate top of stack
-					//TODO
+
+					"lw", //recupero l'indirizzo del metodo a cui saltare usando l'offset di ID nella dispatch table
 					"push "+n.entry.offset, "add", // compute address of "id" declaration
 					"lw", // load address of "id" function
 					"js"  // jump to popped address (saving address of subsequent instruction in $ra)
 			);
 		}
 		else {
-			String argCode = null, getAR = null;
-			for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
-			for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
 			return nlJoin(
 					"lfp", // load Control Link (pointer to frame of function "id" caller)
 					argCode, // generate code for argument expressions in reversed order
