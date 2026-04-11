@@ -77,7 +77,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		nestingLevel++;
 		var names = new HashSet<String>(); //TODO: find better name
 		for (FieldNode field : n.fields) {
-			if (!names.add(field.id)) { //if name is being added return add
+			if (!names.add(field.id)) { //if name is being added return a new error
 				System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
 				stErrors++;
 			}
@@ -88,12 +88,14 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 					stErrors++;
 				} else {
 					var oldFieldOffset = oldFieldEntry.offset;
+					field.offset = oldFieldOffset;
 					var newSTentry = new STentry(nestingLevel, field.getType(), oldFieldOffset);
 					classTypeNode.allFields.set(-oldFieldOffset - 1, field.getType());
 					virtualTable.put(field.id, newSTentry);
 				}
 			}
 			else { // se è un nuovo field
+				field.offset = fieldOffset;
 				var newSTentry = new STentry(nestingLevel, field.getType(), fieldOffset--);
 				classTypeNode.allFields.add(field.getType());
 				virtualTable.put(field.id, newSTentry);
@@ -104,11 +106,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		int prevNLDecOffset = decOffset; // salvo il decOffset usato per le classi per ripristinarlo dopo la visita dei metodi
 		decOffset = methodOffset; //uso il decOffset come variabile globale per passare alla visita del metodo l'offset che deve usare per inserire un nuovo metodo
 		for (MethodNode method : n.methods) {
-			if (names.contains(method.id)) {
+			if (!names.add(method.id)) {
 				System.out.println("Method id " + method.id + " at line " + n.getLine() + " already declared");
 				stErrors++;
-			} else {
-				names.add(method.id);
 			}
 			visit(method);
 			classTypeNode.allMethods.add(method.offset, (ArrowTypeNode) method.getType());

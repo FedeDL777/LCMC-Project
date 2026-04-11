@@ -62,15 +62,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				//scorre tipi in array allFields/allMethods del genitore e
 				//controlla che il tipo alla stessa posizione nel proprio array
 				//allFields/allMethods sia sottotipo
-				var superClassType = (ClassTypeNode) n.superEntry.type;
+				var parentCT = (ClassTypeNode) n.superEntry.type;
 				var classType = (ClassTypeNode) n.getType();
 				// itera sulle posizioni della superclasse: la figlia deve avere tipi compatibili
-				for (int i = 0; i < superClassType.allMethods.size(); i++) {
-					if(!isSubtype(classType.allMethods.get(i), superClassType.allMethods.get(i)))
+				for (int i = 0; i < parentCT.allMethods.size(); i++) {
+					if(!isSubtype(classType.allMethods.get(i), parentCT.allMethods.get(i)))
 						throw new TypeException("Wrong type for method override at position " + i, n.getLine());
 				}
-				for (int i = 0; i < superClassType.allFields.size(); i++) {
-					if(!isSubtype(classType.allFields.get(i), superClassType.allFields.get(i)))
+				for (int i = 0; i < parentCT.allFields.size(); i++) {
+					if(!isSubtype(classType.allFields.get(i), parentCT.allFields.get(i)))
 						throw new TypeException("Wrong type for field override at position " + i, n.getLine());
 				}
 			}
@@ -167,9 +167,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Non boolean condition in if",n.getLine());
 		TypeNode t = visit(n.th);
 		TypeNode e = visit(n.el);
+
+		//TODO check if this two return should be cutted
 		if (isSubtype(t, e)) return e;
 		if (isSubtype(e, t)) return t;
-		throw new TypeException("Incompatible types in then-else branches",n.getLine());
+
+		var retType = lowestCommonAncestor(t, e);
+		if(retType == null)
+			throw new TypeException("Incompatible types in then-else branches",n.getLine());
+		else
+			return retType;
 	}
 
 	@Override

@@ -55,6 +55,34 @@ public class TypeRels {
 		return false;
 	}
 
+	public static TypeNode lowestCommonAncestor(TypeNode a, TypeNode b){
+		if (a instanceof EmptyTypeNode)
+			return b;
+		if (b instanceof EmptyTypeNode) {
+			return a;
+		}
+
+		if (a instanceof RefTypeNode ca && b instanceof RefTypeNode cb) {
+			String caId = ca.id;
+			while (caId != null) {
+				ca = new RefTypeNode(caId);
+				if (isSubtype(ca, cb))
+					return ca;
+				caId = superType.get(caId);
+
+			}
+			return null;
+		}
+		if (a instanceof IntTypeNode || b instanceof IntTypeNode )
+			return new IntTypeNode();
+		if (a instanceof BoolTypeNode && b instanceof BoolTypeNode )
+			return new BoolTypeNode();
+
+		return null;
+	}
+
+
+
 	/*
 	ArrowTypeNode
 	//covarianza sul ritorno
