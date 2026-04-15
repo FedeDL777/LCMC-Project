@@ -359,7 +359,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"push 0",
 				"beq " + l1,
 				"push 1", // return true
-				"b" + l2,
+				"b " + l2,
 				l1 + ":",
 				"push 0", // return false
 				l2 + ":"
@@ -379,7 +379,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"push 1",
 				"beq " + l1,
 				"push 0", // return false
-				"b" + l2,
+				"b " + l2,
 				l1 + ":",
 				"push 1", //return true
 				l2 + ":"
