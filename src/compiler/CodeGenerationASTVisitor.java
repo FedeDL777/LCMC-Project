@@ -346,33 +346,60 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		);
 	}
 
-	//TODO
 	@Override
 	public String visitNode(AndNode n) {
 		if (print) printNode(n);
 		String l1 = freshLabel();
 		String l2 = freshLabel();
 		return nlJoin(
-
+				visit(n.left),
+				"push 0",
+				"beq " + l1,
+				visit(n.right),
+				"push 0",
+				"beq " + l1,
+				"push 1", // return true
+				"b" + l2,
+				l1 + ":",
+				"push 0", // return false
+				l2 + ":"
 		);
 	}
 
-	//TODO
 	@Override
 	public String visitNode(OrNode n) {
 		if (print) printNode(n);
 		String l1 = freshLabel();
 		String l2 = freshLabel();
 		return nlJoin(
-
+				visit(n.left),
+				"push 1",
+				"beq " + l1,
+				visit(n.right),
+				"push 1",
+				"beq " + l1,
+				"push 0", // return false
+				"b" + l2,
+				l1 + ":",
+				"push 1", //return true
+				l2 + ":"
 		);
 	}
 
-	//TODO
 	@Override
 	public String visitNode(NotNode n) {
 		if (print) printNode(n);
+		String l1 = freshLabel();
+		String l2 = freshLabel();
 		return nlJoin(
+				visit(n.exp),
+				"push 1",
+				"beq " + l1,
+				"push 1", // return true
+				"b " + l2,
+				l1 + ":",
+				"push 0", // return false
+				l2 + ":"
 		);
 	}
 
