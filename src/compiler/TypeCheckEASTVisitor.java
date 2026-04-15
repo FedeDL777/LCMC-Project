@@ -168,10 +168,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		TypeNode t = visit(n.th);
 		TypeNode e = visit(n.el);
 
-		//TODO check if this two return should be cutted
-		if (isSubtype(t, e)) return e;
-		if (isSubtype(e, t)) return t;
-
 		var retType = lowestCommonAncestor(t, e);
 		if(retType == null)
 			throw new TypeException("Incompatible types in then-else branches",n.getLine());

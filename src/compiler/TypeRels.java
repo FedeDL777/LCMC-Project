@@ -62,14 +62,14 @@ public class TypeRels {
 			return a;
 		}
 
+		// ca risale la catena delle classi fino a che cb non è sottotipo di ca
 		if (a instanceof RefTypeNode ca && b instanceof RefTypeNode cb) {
 			String caId = ca.id;
 			while (caId != null) {
 				ca = new RefTypeNode(caId);
-				if (isSubtype(ca, cb))
+				if (isSubtype(cb, ca))
 					return ca;
 				caId = superType.get(caId);
-
 			}
 			return null;
 		}
