@@ -165,11 +165,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		if (print) printNode(n, n.id);
 
 		String argCode = null;
-		for (int i = n.expList.size() - 1; i >= 0; i--)
+		for (int i = 0; i < n.expList.size(); i++)
 			argCode = nlJoin(argCode, visit(n.expList.get(i)));
 
 		String moveElementToHeap = null;
-		for (int i = 0; i <= n.expList.size(); i++) {
+		for (int i = 0; i < n.expList.size(); i++) {
 			moveElementToHeap = nlJoin(moveElementToHeap,
 					"lhp", //load hp value on the stack
 					"sw",  // save element in memory hp
