@@ -10,8 +10,24 @@ import java.nio.file.*;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-   			
-    	String fileName = "provaClass.fool";
+
+		//50002
+    	// String fileName = "provaClass.fool";
+		//50000
+		// String fileName = "testCallMethodInsideClass.fool";
+		//3
+		// String fileName = "testLca.fool";
+		//1
+		// String fileName = "testVariance.fool";
+		//error m duplicate
+		// String fileName = "testDuplicateMethod.fool";
+		//override should not work, A not subtype of B
+		// String fileName = "testOverride.fool";
+		//50000
+		String fileName = "testNot.fool";
+		//42
+		// String fileName = "testOverrideMethod.fool";
+
 
     	CharStream chars = CharStreams.fromFileName(fileName);
     	FOOLLexer lexer = new FOOLLexer(chars);

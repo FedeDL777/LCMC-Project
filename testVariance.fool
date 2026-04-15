@@ -1,0 +1,22 @@
+let
+  class A () {
+    fun id:int() 1;
+  }
+  class B extends A () {
+    fun id:int() 2;
+  }
+
+  class Base () {
+    /* Riceve sottoclasse B, restituisce superclasse A */
+    fun process:A (param:B) new A();
+  }
+
+  class Derived extends Base () {
+    /* Corretto overriding:
+       Ritorno (B) è sottotipo del ritorno originale (A) -> Covarianza
+       Parametro (A) è supertipo del parametro originale (B) -> Controvarianza
+    */
+    fun process:B (param:A) new B();
+  }
+in
+  print(1);

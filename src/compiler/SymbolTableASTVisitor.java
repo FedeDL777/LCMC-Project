@@ -111,7 +111,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				stErrors++;
 			}
 			visit(method);
-			classTypeNode.allMethods.add(method.offset, (ArrowTypeNode) method.getType());
+			if (method.offset < classTypeNode.allMethods.size())
+				classTypeNode.allMethods.set(method.offset, (ArrowTypeNode) method.getType());
+			else
+				classTypeNode.allMethods.add((ArrowTypeNode) method.getType());
 		}
 		decOffset = prevNLDecOffset;
 		symTable.remove(nestingLevel--);

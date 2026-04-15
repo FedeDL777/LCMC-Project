@@ -1,0 +1,17 @@
+let
+  class Animal (age:int) {
+    fun getAge:int () age;
+  }
+
+  class Dog extends Animal (breed:int) {
+    fun bark:int () 1;
+  }
+
+  class Cat extends Animal (meow:int) {
+    fun purr:int () 1;
+  }
+
+  /* LCA tra Dog e Cat è Animal. myPet assumerà tipo Animal */
+  var myPet:Animal = if (true) then { new Dog(3, 1) } else { new Cat(4, 2) };
+in
+  print(myPet.getAge());

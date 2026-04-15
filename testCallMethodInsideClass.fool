@@ -6,7 +6,6 @@ let
 
   class TradingAcc extends Account (invested:int) {
     fun getInv:int () invested;
-    fun getMon:int () money+1;
   }
 
   class BankLoan (loan: Account) {
@@ -17,7 +16,8 @@ let
   }
 
   class MyBankLoan extends BankLoan (loan: TradingAcc) {
-    fun openLoan:TradingAcc (l:Account) if (l.getMon()>=20000)
+    fun getMinimumAmount:int () 20000;
+    fun openLoan:TradingAcc (l:Account) if (l.getMon()>=getMinimumAmount())
       then {new TradingAcc(loan.getMon(),loan.getInv())}
       else {null};
   }

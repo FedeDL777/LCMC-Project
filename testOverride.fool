@@ -1,0 +1,14 @@
+let
+  class A () {}
+  class B extends A () {}
+
+  class Base () {
+    fun test:B () new B();
+  }
+
+  class Derived extends Base () {
+    /* ERRORE: Il tipo di ritorno A non è sottotipo di B */
+    fun test:A () new A();
+  }
+in
+  print(1);

@@ -1,0 +1,18 @@
+let
+
+  class A (val:int) {
+    fun m1:int () val;
+    fun m2:int () val;
+  }
+
+  class B extends A (extra:int) {
+    fun m2:int () extra;
+  }
+
+  class C extends B (bonus:int) {
+    fun m3:int () bonus;
+  }
+
+  var obj:C = new C(10, 20, 42);
+
+in print(obj.m3());
