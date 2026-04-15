@@ -12,7 +12,7 @@ public class Test {
     public static void main(String[] args) throws Exception {
 
 		//50002
-    	// String fileName = "provaClass.fool";
+    	String fileName = "provaClass.fool";
 		//50000
 		// String fileName = "testCallMethodInsideClass.fool";
 		//3
@@ -24,7 +24,7 @@ public class Test {
 		//override should not work, A not subtype of B
 		// String fileName = "testOverride.fool";
 		//50000
-		String fileName = "testNot.fool";
+		// String fileName = "testNot.fool";
 		//42
 		// String fileName = "testOverrideMethod.fool";
 

@@ -24,6 +24,6 @@ let
   var myTradingAcc:TradingAcc = new TradingAcc(20000,5000);
   var myLoan:Account = bl.openLoan(myTradingAcc);
 
-in print(if (myLoan==null) then {0} else {myLoan.getMon()});
+in print(if (myLoan==null) then {myLoan.getMon()} else {myLoan.getMon()});
 
 /*50000*/

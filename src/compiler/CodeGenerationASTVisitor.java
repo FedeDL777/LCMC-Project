@@ -138,6 +138,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i = 0; i < n.nl - n.entry.nl; i++)
 			getAR = nlJoin(getAR, "lw");
 
+		String labelNull = freshLabel();
+		String labelNotNull = freshLabel();
+
 		return nlJoin(
 				"lfp", // load Control Link (pointer to frame of function "id" caller)
 				argCode, // generate code for argument expressions in reversed order
@@ -149,13 +152,21 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 				"stm", // set $tm to popped value (with the aim of duplicating top of stack)
 				"ltm", // load Access Link (pointer to frame of function "id" declaration)
+				"push -1", "beq " + labelNull, //check if access link is not null
+				"ltm",
 				"ltm", // duplicate top of stack
 
 				"lw", //load dispatch pointer(dispatch table address)
 
 				"push " + n.methodEntry.offset, "add", //calculate the right method address by adding offset
 				"lw", // load address of method "id2"
-				"js"  // jump to popped address (saving address of subsequent instruction in $ra)
+				"js",  // jump to popped address (saving address of subsequent instruction in $ra)
+				"b " + labelNotNull,
+				labelNull + ":",
+				"push -1",
+				"print",
+				"halt", //terminate program if calling a method from a null class
+				labelNotNull + ":"
 		);
 
 	}
