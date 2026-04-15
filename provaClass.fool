@@ -26,3 +26,5 @@ let
   var myLoan:Account = bl.openLoan(myTradingAcc);
 
 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
+
+/*50000*/
