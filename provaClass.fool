@@ -6,7 +6,6 @@ let
 
   class TradingAcc extends Account (invested:int) {
     fun getInv:int () invested;
-    fun getMon:int () money+1;
   }
 
   class BankLoan (loan: Account) {
@@ -27,5 +26,3 @@ let
   var myLoan:Account = bl.openLoan(myTradingAcc);
 
 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
-
-/*50000*/
