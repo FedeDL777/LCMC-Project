@@ -7,7 +7,7 @@ public int lexicalErrors=0;
 /*------------------------------------------------------------------
  * PARSER RULES
  *------------------------------------------------------------------*/
-
+  
 prog : progbody EOF ;
 
 progbody : LET ( cldec+ dec* | dec+ ) IN exp SEMIC #letInProg
@@ -98,6 +98,7 @@ BOOL	: 'bool' ;
 NUM     : '0' | ('1'..'9')('0'..'9')* ;
 
 ID  	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')* ;
+
 
 WHITESP  : ( '\t' | ' ' | '\r' | '\n' )+    -> channel(HIDDEN) ;
 

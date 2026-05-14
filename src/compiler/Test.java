@@ -5,14 +5,13 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import compiler.lib.*;
 import compiler.exc.*;
-import visualsvm.*;
-import java.nio.file.*;
+import svm.*;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-
+   			
 		//50002
-    	String fileName = "provaClass.fool";
+		String fileName = "provaClass.fool";
 		//50000
 		// String fileName = "testCallMethodInsideClass.fool";
 		//3
@@ -27,7 +26,6 @@ public class Test {
 		// String fileName = "testNot.fool";
 		//42
 		// String fileName = "testOverrideMethod.fool";
-
 
     	CharStream chars = CharStreams.fromFileName(fileName);
     	FOOLLexer lexer = new FOOLLexer(chars);
@@ -72,10 +70,10 @@ public class Test {
 		if ( frontEndErrors > 0) System.exit(1);   
 
     	System.out.println("Generating code.");
-    	String code = new CodeGenerationASTVisitor().visit(ast);
-    	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm"));
+    	String code = new CodeGenerationASTVisitor().visit(ast);        
+    	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
     	out.write(code);
-    	out.close();
+    	out.close(); 
     	System.out.println("");
 
     	System.out.println("Assembling generated code.");
@@ -91,7 +89,7 @@ public class Test {
     	if (lexerASM.lexicalErrors+parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
 
     	System.out.println("Running generated code via Stack Virtual Machine.");
-    	ExecuteVM vm = new ExecuteVM(parserASM.code,parserASM.sourceMap,Files.readAllLines(Paths.get(fileName+".asm")));
+    	ExecuteVM vm = new ExecuteVM(parserASM.code);
     	vm.cpu();
 
     }
