@@ -336,8 +336,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return null;
 	}
 
-//
-
 	@Override
 	public TypeNode visitSTentry(STentry entry) throws TypeException {
 		if (print) printSTentry("type");

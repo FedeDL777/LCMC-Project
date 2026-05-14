@@ -24,7 +24,6 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 	}
 
 	//classdec
-	//TODO
 	@Override
 	public Void visitNode(ClassNode n) {
 		printNode(n, n.id);

@@ -75,7 +75,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		symTable.add(virtualTable);
 
 		nestingLevel++;
-		var names = new HashSet<String>(); //TODO: find better name
+		var names = new HashSet<String>();
 		for (FieldNode field : n.fields) {
 			if (!names.add(field.id)) { //if name is being added return a new error
 				System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
@@ -101,8 +101,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				virtualTable.put(field.id, newSTentry);
 			}
 		}
-		//TODO: Spostare modifica della virtual table nella visit del methodNode
-		// (classTypeNode modificato dopo la visita del metodo all'interno della classNode)
 		int prevNLDecOffset = decOffset; // salvo il decOffset usato per le classi per ripristinarlo dopo la visita dei metodi
 		decOffset = methodOffset; //uso il decOffset come variabile globale per passare alla visita del metodo l'offset che deve usare per inserire un nuovo metodo
 		for (MethodNode method : n.methods) {
@@ -121,7 +119,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
-	//TODO Visit Method Node
 	@Override
 	public Void visitNode(MethodNode n) {
 		if (print) printNode(n);
@@ -178,14 +175,12 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
-	//TODO Visit Empty Node
 	@Override
 	public Void visitNode(EmptyNode n) {
 		if (print) printNode(n);
 		return null;
 	}
 
-	//TODO Visit New Node
 	@Override
 	public Void visitNode(NewNode n) {
 		if (print) printNode(n);
@@ -201,7 +196,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
-	//TODO Visit ClassCall Node
 	@Override
 	public Void visitNode(ClassCallNode n) {
 		if (print) printNode(n);

@@ -83,7 +83,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		);
 	}
 
-	//TODO: check if return null
 	@Override
 	public String visitNode(MethodNode n) {
 		if (print) printNode(n, n.id);
@@ -114,7 +113,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"js"  // jump to to popped address
 				)
 		);
-		//return void code
 		return null;
 	}
 

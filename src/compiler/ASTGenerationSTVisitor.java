@@ -44,7 +44,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return visit(c.progbody());
 	}
 
-	//TODO: Added class declaration
 	@Override
 	public Node visitLetInProg(LetInProgContext c) {
 		if (print) printVarAndProdName(c);
@@ -61,7 +60,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	//cldec
-	//TODO: fix class extension
 	@Override
 	public Node visitCldec(CldecContext c) {
 		if (print) printVarAndProdName(c);
